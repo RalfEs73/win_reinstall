@@ -21,7 +21,29 @@ iex ((New-Object System.Net.WebClient).DownloadString('https://raw.githubusercon
 iex ((New-Object System.Net.WebClient).DownloadString('https://raw.githubusercontent.com/RalfEs73/win_reinstall/main/win10_reinstall.ps1'))
 ```
 
+# Windows 11
+## Die folgenden Anwendungen werden installiert:
+* Chocolatey Core
+* WinRAR
+* gsudo
+* ChocoUpdateNotifier
+* Notepad++
+* 4K Video Downloader
+* Image Resizer for Windows
+* VLC
+* AnyStream
+* File Converter
+* HandBrake
+* GitHub Desktop
+* Exodus Wallet
+* Ledger Live Wallet
+* Thumbico
+* Film Info! Organiser
 
+## Die folgenden Anwendungen werden deinstalliert:
+* -
+
+# Windows 10
 ## Die folgenden Anwendungen werden installiert:
 * Chocolatey Core
 * Edge (Chromium)
