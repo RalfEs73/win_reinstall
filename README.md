@@ -12,9 +12,15 @@ Dieses Script installiert die von mir gewünschten Anwendungen auf einem Windows
 
 ## Aufruf
 Mit PowerShell (und Adminrechten) den folgenden Befehl starten:
+Windows 11
 ```sh
-iex ((New-Object System.Net.WebClient).DownloadString('https://raw.githubusercontent.com/RalfEs73/win10_reinstall_choco/master/win10_reinstall.ps1'))
+iex ((New-Object System.Net.WebClient).DownloadString('https://raw.githubusercontent.com/RalfEs73/win_reinstall/main/win11_reinstall.ps1'))
 ```
+Windows 10
+```sh
+iex ((New-Object System.Net.WebClient).DownloadString('https://raw.githubusercontent.com/RalfEs73/win_reinstall/main/win10_reinstall.ps1'))
+```
+
 
 ## Die folgenden Anwendungen werden installiert:
 * Chocolatey Core
