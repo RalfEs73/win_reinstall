@@ -3,7 +3,6 @@
 $CurrentUser = [System.Security.Principal.WindowsIdentity]::GetCurrent().Name
 $CurrentUserName = $CurrentUser.split("\")[1]
 
-Install-PackageProvider -Name NuGet -Force
 Install-Module -Name BurntToast -Force
 Set-ExecutionPolicy -ExecutionPolicy Unrestricted -Force
 
