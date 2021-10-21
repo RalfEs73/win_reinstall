@@ -97,11 +97,6 @@ Start-BitsTransfer -Source "https://raw.githubusercontent.com/RalfEs73/chocolate
 Start-BitsTransfer -Source "https://raw.githubusercontent.com/RalfEs73/chocolatey-packages/master/film-info-organizer/settings/tmdb_config.xml" -Destination "C:\Users\$CurrentUserName\AppData\Roaming\film info! organizer\tmdb_config.xml"
 Write-Host "Done"
 
-Write-Host "Install Office 365"
-Start-BitsTransfer -Source "https://c2rsetup.officeapps.live.com/c2r/download.aspx?productReleaseID=O365ProPlusRetail&platform=Def&language=de-de&TaxRegion=pr&correlationId=f36678f5-ea2f-4ea4-982c-d51da53726ab&token=0c526214-e487-4a88-b804-8246c73a3a4a&version=O16GA&source=O15OLSO365&Br=2" -Destination "C:\Users\$CurrentUserName\Downloads\OfficeSetup.exe"
-& "C:\Users\$CurrentUserName\Downloads\OfficeSetup.exe"
-Write-Host "Done"
-
 Write-Host "Install WhatsApp"
 Start-BitsTransfer -Source "https://web.whatsapp.com/desktop/windows/release/x64/WhatsAppSetup.exe" -Destination "C:\Users\$CurrentUserName\Downloads\WhatsAppSetup.exe"
 Start-Process -Wait -FilePath "C:\Users\$CurrentUserName\Downloads\WhatsAppSetup.exe" -ArgumentList "--silent"
