@@ -4,8 +4,8 @@ Write-Host "Windows 11"
 $CurrentUser = [System.Security.Principal.WindowsIdentity]::GetCurrent().Name
 $CurrentUserName = $CurrentUser.split("\")[1]
 
-Install-Module -Name BurntToast -Force
 Set-ExecutionPolicy -ExecutionPolicy Unrestricted -Force
+Install-Module -Name BurntToast -Force
 
 Write-Host "Installing Chocolatey"
 Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
@@ -37,6 +37,10 @@ Write-Host "Done"
 
 Write-Host "Installing Image Resizer for Windows"
 choco install imageresizerapp
+Write-Host "Done"
+
+Write-Host "Installing EPOS Connect"
+choco install epos-connect
 Write-Host "Done"
 
 Write-Host "Installing VLC"
@@ -91,6 +95,17 @@ Start-BitsTransfer -Source "https://raw.githubusercontent.com/RalfEs73/chocolate
 Start-BitsTransfer -Source "https://raw.githubusercontent.com/RalfEs73/chocolatey-packages/master/film-info-organizer/settings/Genre.xml" -Destination "C:\Users\$CurrentUserName\AppData\Roaming\film info! organizer\Genre.xml"
 Start-BitsTransfer -Source "https://raw.githubusercontent.com/RalfEs73/chocolatey-packages/master/film-info-organizer/settings/Interface.xml" -Destination "C:\Users\$CurrentUserName\AppData\Roaming\film info! organizer\Interface.xml"
 Start-BitsTransfer -Source "https://raw.githubusercontent.com/RalfEs73/chocolatey-packages/master/film-info-organizer/settings/tmdb_config.xml" -Destination "C:\Users\$CurrentUserName\AppData\Roaming\film info! organizer\tmdb_config.xml"
+Write-Host "Done"
+
+Write-Host "Install Office 365"
+Start-BitsTransfer -Source "https://c2rsetup.officeapps.live.com/c2r/download.aspx?productReleaseID=O365ProPlusRetail&platform=Def&language=de-de&TaxRegion=pr&correlationId=f36678f5-ea2f-4ea4-982c-d51da53726ab&token=0c526214-e487-4a88-b804-8246c73a3a4a&version=O16GA&source=O15OLSO365&Br=2" -Destination "C:\Users\$CurrentUserName\Downloads\OfficeSetup.exe"
+& "C:\Users\$CurrentUserName\Downloads\OfficeSetup.exe"
+Write-Host "Done"
+
+Write-Host "Install WhatsApp"
+Start-BitsTransfer -Source "https://web.whatsapp.com/desktop/windows/release/x64/WhatsAppSetup.exe" -Destination "C:\Users\$CurrentUserName\Downloads\WhatsAppSetup.exe"
+Start-Process -Wait -FilePath "C:\Users\$CurrentUserName\Downloads\WhatsAppSetup.exe" -ArgumentList "--silent"
+Remove-Item "C:\Users\$CurrentUserName\Desktop\WhatsApp.lnk"
 Write-Host "Done"
 
 $Logfiles = @(
