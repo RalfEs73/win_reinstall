@@ -30,6 +30,7 @@ iex ((New-Object System.Net.WebClient).DownloadString('https://raw.githubusercon
 * Notepad++
 * 4K Video Downloader
 * Image Resizer for Windows
+* EPOS Connect
 * VLC
 * AnyStream
 * File Converter
@@ -39,6 +40,8 @@ iex ((New-Object System.Net.WebClient).DownloadString('https://raw.githubusercon
 * Ledger Live Wallet
 * Thumbico
 * Film Info! Organiser
+* Office 365
+* WhatsApp
 
 ## Die folgenden Anwendungen werden deinstalliert:
 * -
