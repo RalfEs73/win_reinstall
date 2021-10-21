@@ -40,7 +40,6 @@ iex ((New-Object System.Net.WebClient).DownloadString('https://raw.githubusercon
 * Ledger Live Wallet
 * Thumbico
 * Film Info! Organiser
-* Office 365
 * WhatsApp
 
 ## Die folgenden Anwendungen werden deinstalliert:
