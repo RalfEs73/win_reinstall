@@ -4,8 +4,8 @@ Write-Host "Windows 11"
 $CurrentUser = [System.Security.Principal.WindowsIdentity]::GetCurrent().Name
 $CurrentUserName = $CurrentUser.split("\")[1]
 
-Set-ExecutionPolicy -ExecutionPolicy Unrestricted -Force
 Install-Module -Name BurntToast -Force
+Set-ExecutionPolicy -ExecutionPolicy Unrestricted -Force
 
 Write-Host "Installing Chocolatey"
 Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
@@ -41,6 +41,7 @@ Write-Host "Done"
 
 Write-Host "Installing EPOS Connect"
 choco install epos-connect
+Remove-Item "C:\Users\Public\Desktop\EPOS Connect.lnk"
 Write-Host "Done"
 
 Write-Host "Installing VLC"
