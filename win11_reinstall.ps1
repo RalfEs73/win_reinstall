@@ -58,6 +58,24 @@ Write-Host "Installing File Converter"
 choco install file-converter
 Write-Host "Done"
 
+Write-Host "Install WhatsApp"
+choco install whatsapp
+Remove-Item "C:\Users\$CurrentUserName\Desktop\WhatsApp.lnk"
+choco pin add -n whatsapp
+Write-Host "Done"
+
+Write-Host "Install Telegram"
+choco install telegram
+Remove-Item "C:\Users\$CurrentUserName\Desktop\Telegram.lnk"
+choco pin add -n telegram
+Write-Host "Done"
+
+Write-Host "Install Discord"
+choco install discord.install
+Remove-Item "C:\Users\$CurrentUserName\Desktop\Discord.lnk"
+choco pin add -n discord.install
+Write-Host "Done"
+
 Write-Host "Installing HandBrake"
 choco install handbrake.install
 Remove-Item "C:\Users\Public\Desktop\Handbrake.lnk"
@@ -98,11 +116,11 @@ Start-BitsTransfer -Source "https://raw.githubusercontent.com/RalfEs73/chocolate
 Start-BitsTransfer -Source "https://raw.githubusercontent.com/RalfEs73/chocolatey-packages/master/film-info-organizer/settings/tmdb_config.xml" -Destination "C:\Users\$CurrentUserName\AppData\Roaming\film info! organizer\tmdb_config.xml"
 Write-Host "Done"
 
-Write-Host "Install WhatsApp"
-Start-BitsTransfer -Source "https://web.whatsapp.com/desktop/windows/release/x64/WhatsAppSetup.exe" -Destination "C:\Users\$CurrentUserName\Downloads\WhatsAppSetup.exe"
-Start-Process -Wait -FilePath "C:\Users\$CurrentUserName\Downloads\WhatsAppSetup.exe" -ArgumentList "--silent"
-Remove-Item "C:\Users\$CurrentUserName\Desktop\WhatsApp.lnk"
+Write-Host "Settings Windows Termial"
+New-Item -Path "C:\Users\$CurrentUserName\AppData\Local\Packages\Microsoft.WindowsTerminal_8wekyb3d8bbwe\LocalState" -ItemType directory -Force | Out-Null
+Start-BitsTransfer -Source "https://raw.githubusercontent.com/RalfEs73/win_reinstall/main/Config%20Files/Windows%20Terminal/settings.json" -Destination "C:\Users\$CurrentUserName\AppData\Local\Packages\Microsoft.WindowsTerminal_8wekyb3d8bbwe\LocalState\settings.json"
 Write-Host "Done"
+
 
 $Logfiles = @(
     "C:\ProgramData\chocolatey\logs\chocolatey.log"
