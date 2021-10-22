@@ -34,13 +34,18 @@ iex ((New-Object System.Net.WebClient).DownloadString('https://raw.githubusercon
 * VLC
 * AnyStream
 * File Converter
+* WhatsApp
+* Telegram
+* Discord
 * HandBrake
 * GitHub Desktop
 * Exodus Wallet
 * Ledger Live Wallet
 * Thumbico
 * Film Info! Organiser
-* WhatsApp
+
+## Settings
+* Windows Termial
 
 ## Die folgenden Anwendungen werden deinstalliert:
 * -
