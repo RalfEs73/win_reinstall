@@ -42,6 +42,7 @@ Write-Host "Done"
 Write-Host "Installing EPOS Connect"
 choco install epos-connect
 Remove-Item "C:\Users\Public\Desktop\EPOS Connect.lnk"
+Stop-Process -Name epos-connect
 Write-Host "Done"
 
 Write-Host "Installing VLC"
@@ -83,9 +84,9 @@ Write-Host "Done"
 
 Write-Host "Installing GitHub Desktop"
 choco install github-desktop
-choco pin add -n=github-desktop
 Remove-Item "C:\Users\$CurrentUserName\Desktop\GitHub Desktop.lnk"
 Stop-Process -Name GitHubDesktop
+choco pin add -n=github-desktop
 Write-Host "Done"
 
 Write-Host "Installing Exodus Wallet"
