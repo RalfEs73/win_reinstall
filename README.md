@@ -88,7 +88,7 @@ iex ((New-Object System.Net.WebClient).DownloadString('https://raw.githubusercon
 * Film Info! Organiser
 
 ## Die folgenden Anwendungen werden deinstalliert:
-* CandyCrush App
+* -
 
 <!-- MARKDOWN LINKS & IMAGES -->
 <!-- https://www.markdownguide.org/basic-syntax/#reference-style-links -->
