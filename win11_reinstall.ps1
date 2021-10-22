@@ -4,7 +4,6 @@ Write-Host "Windows 11"
 $CurrentUser = [System.Security.Principal.WindowsIdentity]::GetCurrent().Name
 $CurrentUserName = $CurrentUser.split("\")[1]
 
-Install-Module -Name BurntToast -Force
 Set-ExecutionPolicy -ExecutionPolicy Unrestricted -Force
 
 Write-Host "Installing Chocolatey"
@@ -136,4 +135,3 @@ foreach ($Log in $Logfiles) {
         }
     }
 
-New-BurntToastNotification -Text "Installation abgeschlossen", 'Die Installationen der Anwendungen wurden erfolgreich abgeschlossen'
