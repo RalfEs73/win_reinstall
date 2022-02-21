@@ -20,29 +20,33 @@ iex ((New-Object System.Net.WebClient).DownloadString('https://raw.githubusercon
 ```sh
 iex ((New-Object System.Net.WebClient).DownloadString('https://raw.githubusercontent.com/RalfEs73/win_reinstall/main/win10_reinstall.ps1'))
 ```
+### Windows 11 (Business)
+```sh
+iex ((New-Object System.Net.WebClient).DownloadString('https://raw.githubusercontent.com/RalfEs73/win_reinstall/main/win11_business_reinstall.ps1'))
+```
 
 # Windows 11
 ## Die folgenden Anwendungen werden installiert:
 * Chocolatey Core
-* WinRAR
+* WinRAR (nicht bei Business)
 * gsudo
 * ChocoUpdateNotifier
 * Notepad++
-* 4K Video Downloader
+* 4K Video Downloader (nicht bei Business)
 * Image Resizer for Windows
 * EPOS Connect
-* VLC
-* AnyStream
-* File Converter
-* WhatsApp
-* Telegram
-* Discord
-* HandBrake
+* VLC (nicht bei Business)
+* AnyStream (nicht bei Business)
+* File Converter (nicht bei Business)
+* WhatsApp (nicht bei Business)
+* Telegram (nicht bei Business)
+* Discord (nicht bei Business)
+* HandBrake (nicht bei Business)
 * GitHub Desktop
-* Exodus Wallet
-* Ledger Live Wallet
+* Exodus Wallet (nicht bei Business)
+* Ledger Live Wallet (nicht bei Business)
 * Thumbico
-* Film Info! Organiser
+* Film Info! Organiser (nicht bei Business)
 
 ## Settings
 * Windows Termial
