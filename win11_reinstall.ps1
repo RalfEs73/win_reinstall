@@ -59,6 +59,10 @@ Write-Host "Installing File Converter"
 choco install file-converter
 Write-Host "Done"
 
+Write-Host "Installing WinSCP"
+choco install winscp
+Write-Host "Done"
+
 Write-Host "Install WhatsApp"
 choco install whatsapp
 Remove-Item "C:\Users\$CurrentUserName\Desktop\WhatsApp.lnk"
