@@ -61,6 +61,7 @@ Write-Host "Done"
 
 Write-Host "Installing WinSCP"
 choco install winscp
+Remove-Item "C:\Users\Public\Desktop\WinSCP.lnk"
 Write-Host "Done"
 
 Write-Host "Install WhatsApp"
