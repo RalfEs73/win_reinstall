@@ -45,6 +45,10 @@ Remove-Item "C:\Users\Public\Desktop\EPOS Connect.lnk"
 Stop-Process -Name epos-connect
 Write-Host "Done"
 
+Write-Host "Installing Jabra Direct"
+choco install jabra-direct
+Write-Host "Done"
+
 Write-Host "Installing VLC"
 choco install vlc
 Remove-Item "C:\Users\Public\Desktop\VLC media player.lnk"

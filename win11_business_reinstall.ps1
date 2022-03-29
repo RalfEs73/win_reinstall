@@ -32,6 +32,10 @@ Remove-Item "C:\Users\Public\Desktop\EPOS Connect.lnk"
 Stop-Process -Name epos-connect
 Write-Host "Done"
 
+Write-Host "Installing Jabra Direct"
+choco install jabra-direct
+Write-Host "Done"
+
 Write-Host "Installing File Converter"
 choco install file-converter
 Write-Host "Done"
