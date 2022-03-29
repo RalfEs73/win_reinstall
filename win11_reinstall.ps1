@@ -51,7 +51,6 @@ Write-Host "Done"
 
 Write-Host "Installing Plex"
 choco install plex
-choco pin add -n plex
 Write-Host "Done"
 
 Write-Host "Installing VLC"
