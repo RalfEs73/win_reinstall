@@ -36,6 +36,7 @@ iex ((New-Object System.Net.WebClient).DownloadString('https://raw.githubusercon
 * Image Resizer for Windows
 * EPOS Connect
 * Jabra Direct
+* Plex
 * VLC (nicht bei Business)
 * AnyStream (nicht bei Business)
 * File Converter (nicht bei Business)
