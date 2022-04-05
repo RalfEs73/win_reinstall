@@ -49,6 +49,12 @@ Write-Host "Installing Jabra Direct"
 choco install jabra-direct
 Write-Host "Done"
 
+Write-Host "Installing Stream Deck"
+choco install streamdeck
+Remove-Item "C:\Users\Public\Desktop\Stream Deck.lnk"
+Stop-Process -Name "Stream*"
+Write-Host "Done"
+
 Write-Host "Installing Plex"
 choco install plex
 Write-Host "Done"
