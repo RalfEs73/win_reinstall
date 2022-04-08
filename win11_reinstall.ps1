@@ -110,7 +110,6 @@ Write-Host "Done"
 
 Write-Host "Installing Exodus Wallet"
 choco install exoduswallet
-choco pin add -n=exoduswallet
 Remove-Item "C:\Users\$CurrentUserName\Desktop\Exodus.lnk"
 Write-Host "Done"
 
