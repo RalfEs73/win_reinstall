@@ -140,6 +140,26 @@ New-Item -Path "C:\Users\$CurrentUserName\AppData\Local\Packages\Microsoft.Windo
 Start-BitsTransfer -Source "https://raw.githubusercontent.com/RalfEs73/win_reinstall/main/Config%20Files/Windows%20Terminal/settings.json" -Destination "C:\Users\$CurrentUserName\AppData\Local\Packages\Microsoft.WindowsTerminal_8wekyb3d8bbwe\LocalState\settings.json"
 Write-Host "Done"
 
+$apps = @(
+  'FileBot'
+)
+
+foreach ($app in $apps) {
+  $installed = winget list --query "$app"
+  if ($installed -match $app) {
+    Write-Output "App '$app' is already installed."
+  }
+  else {
+    if ((winget search --query "$app" --source "msstore") -match $app) {
+      Write-Output "Installing app '$app' from msstore."
+      winget install --query "$app" --source msstore --accept-package-agreements --accept-source-agreements
+    }
+    else {
+      Write-Output "Installing app '$app' from winget."
+      winget install --query "$app" --accept-package-agreements --accept-source-agreements
+    }
+  }
+}
 
 $Logfiles = @(
     "C:\ProgramData\chocolatey\logs\chocolatey.log"
