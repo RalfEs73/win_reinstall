@@ -108,11 +108,6 @@ Stop-Process -Name GitHubDesktop
 choco pin add -n=github-desktop
 Write-Host "Done"
 
-Write-Host "Installing Exodus Wallet"
-choco install exoduswallet
-Remove-Item "C:\Users\$CurrentUserName\Desktop\Exodus.lnk"
-Write-Host "Done"
-
 Write-Host "Installing Ledger Live Wallet"
 choco install ledger-live
 Remove-Item "C:\Users\Public\Desktop\Ledger Live.lnk"
