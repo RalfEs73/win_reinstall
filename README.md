@@ -16,10 +16,6 @@ Mit PowerShell (und Adminrechten) den folgenden Befehl starten:
 ```sh
 iex ((New-Object System.Net.WebClient).DownloadString('https://raw.githubusercontent.com/RalfEs73/win_reinstall/main/win11_reinstall.ps1'))
 ```
-### Windows 10
-```sh
-iex ((New-Object System.Net.WebClient).DownloadString('https://raw.githubusercontent.com/RalfEs73/win_reinstall/main/win10_reinstall.ps1'))
-```
 ### Windows 11 (Business)
 ```sh
 iex ((New-Object System.Net.WebClient).DownloadString('https://raw.githubusercontent.com/RalfEs73/win_reinstall/main/win11_business_reinstall.ps1'))
@@ -54,46 +50,6 @@ iex ((New-Object System.Net.WebClient).DownloadString('https://raw.githubusercon
 
 ## Settings
 * Windows Termial
-
-## Die folgenden Anwendungen werden deinstalliert:
-* -
-
-# Windows 10
-## Die folgenden Anwendungen werden installiert:
-* Chocolatey Core
-* Edge (Chromium)
-* WinRAR
-* gsudo
-* ChocoUpdateNotifier
-* Windows Terminal
-* GeForce Experience
-* WinSCP
-* Notepad++
-* 4K Video Downloader
-* Image Resizer for Windows
-* VLC
-* Plex
-* AnyDVD
-* AnyStream
-* File Converter
-* HandBrake
-* GitHub Desktop
-* Telegram
-* WhatsApp
-* Discord
-* Gitter
-* Epic Games Launcher
-* Steam
-* Uplay (Ubisoft Connect)
-* Amazon Games
-* Streamlabs OBS
-* Spotify
-* Driver Booster
-* Exodus Wallet
-* Ledger Live Wallet
-* Thumbico
-* Movavi Video Editor Plus
-* Film Info! Organiser
 
 ## Die folgenden Anwendungen werden deinstalliert:
 * -
