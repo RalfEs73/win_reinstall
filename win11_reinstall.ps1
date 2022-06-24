@@ -59,6 +59,10 @@ Write-Host "Installing Plex"
 choco install plex
 Write-Host "Done"
 
+Write-Host "Installing Plex"
+Winget install Netflix
+Write-Host "Done"
+
 Write-Host "Installing VLC"
 choco install vlc
 Remove-Item "C:\Users\Public\Desktop\VLC media player.lnk"

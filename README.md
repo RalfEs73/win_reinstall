@@ -34,6 +34,7 @@ iex ((New-Object System.Net.WebClient).DownloadString('https://raw.githubusercon
 * Jabra Direct
 * Stream Deck (nicht bei Business)
 * Plex
+* Netflix
 * VLC (nicht bei Business)
 * AnyStream (nicht bei Business)
 * File Converter (nicht bei Business)
