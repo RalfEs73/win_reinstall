@@ -26,14 +26,6 @@ Write-Host "Installing Image Resizer for Windows"
 choco install imageresizerapp
 Write-Host "Done"
 
-Write-Host "Installing Plex"
-choco install plex
-Write-Host "Done"
-
-Write-Host "Installing Plex"
-Winget install Netflix
-Write-Host "Done"
-
 Write-Host "Installing EPOS Connect"
 choco install epos-connect
 Remove-Item "C:\Users\Public\Desktop\EPOS Connect.lnk"
@@ -42,6 +34,14 @@ Write-Host "Done"
 
 Write-Host "Installing Jabra Direct"
 choco install jabra-direct
+Write-Host "Done"
+
+Write-Host "Installing Plex"
+choco install plex
+Write-Host "Done"
+
+Write-Host "Installing Netflix"
+Winget install Netflix
 Write-Host "Done"
 
 Write-Host "Installing File Converter"

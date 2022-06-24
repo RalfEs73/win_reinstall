@@ -37,7 +37,7 @@ iex ((New-Object System.Net.WebClient).DownloadString('https://raw.githubusercon
 * Netflix
 * VLC (nicht bei Business)
 * AnyStream (nicht bei Business)
-* File Converter (nicht bei Business)
+* File Converter
 * WinSCP (nicht bei Business)
 * WhatsApp (nicht bei Business)
 * Telegram (nicht bei Business)
@@ -46,7 +46,7 @@ iex ((New-Object System.Net.WebClient).DownloadString('https://raw.githubusercon
 * GitHub Desktop
 * Exodus Wallet (nicht bei Business)
 * Ledger Live Wallet (nicht bei Business)
-* Thumbico
+* Thumbico (nicht bei Business)
 * Film Info! Organiser (nicht bei Business)
 
 ## Settings
