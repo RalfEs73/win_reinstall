@@ -20,8 +20,6 @@ iex ((New-Object System.Net.WebClient).DownloadString('https://raw.githubusercon
 ```sh
 iex ((New-Object System.Net.WebClient).DownloadString('https://raw.githubusercontent.com/RalfEs73/win_reinstall/main/win11_business_reinstall.ps1'))
 ```
-
-# Windows 11
 ## Die folgenden Anwendungen werden installiert:
 * Chocolatey Core
 * WinRAR (nicht bei Business)
