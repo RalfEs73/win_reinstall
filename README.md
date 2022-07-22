@@ -39,6 +39,7 @@ iex ((New-Object System.Net.WebClient).DownloadString('https://raw.githubusercon
 * WinSCP (nicht bei Business)
 * WhatsApp (nicht bei Business)
 * Telegram (nicht bei Business)
+* microsip (nicht bei Business)
 * Discord (nicht bei Business)
 * HandBrake (nicht bei Business)
 * GitHub Desktop

@@ -94,6 +94,10 @@ Remove-Item "C:\Users\$CurrentUserName\Desktop\Telegram.lnk"
 choco pin add -n telegram
 Write-Host "Done"
 
+Write-Host "Install microsip"
+choco install microsip
+Write-Host "Done"
+
 Write-Host "Install Discord"
 choco install discord.install
 Remove-Item "C:\Users\$CurrentUserName\Desktop\Discord.lnk"
