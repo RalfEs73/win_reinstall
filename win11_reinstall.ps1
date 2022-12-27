@@ -69,6 +69,10 @@ choco install anystream
 Remove-Item "C:\Users\Public\Desktop\AnyStream.lnk"
 Write-Host "Done"
 
+Write-Host "Installing FileBot"
+choco install filebot
+Write-Host "Done"
+
 Write-Host "Installing File Converter"
 choco install file-converter
 Write-Host "Done"

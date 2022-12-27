@@ -32,6 +32,7 @@ iex ((New-Object System.Net.WebClient).DownloadString('https://raw.githubusercon
 * Netflix
 * VLC (nicht bei Business)
 * AnyStream (nicht bei Business)
+* FileBot (nicht bei Business)
 * File Converter
 * WinSCP (nicht bei Business)
 * WhatsApp (nicht bei Business)
