@@ -74,4 +74,5 @@ foreach ($Log in $Logfiles) {
         }
     }
 
+Start-Sleep -Seconds 5
 New-BurntToastNotification -Text "Installation abgeschlossen", 'Die Installationen der Anwendungen wurden erfolgreich abgeschlossen'
