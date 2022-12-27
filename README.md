@@ -29,7 +29,6 @@ iex ((New-Object System.Net.WebClient).DownloadString('https://raw.githubusercon
 * 4K Video Downloader (nicht bei Business)
 * Image Resizer for Windows
 * EPOS Connect
-* Jabra Direct
 * Stream Deck (nicht bei Business)
 * Plex
 * Netflix
@@ -43,7 +42,6 @@ iex ((New-Object System.Net.WebClient).DownloadString('https://raw.githubusercon
 * Discord (nicht bei Business)
 * HandBrake (nicht bei Business)
 * GitHub Desktop
-* Exodus Wallet (nicht bei Business)
 * Ledger Live Wallet (nicht bei Business)
 * Thumbico (nicht bei Business)
 * Film Info! Organiser (nicht bei Business)

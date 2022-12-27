@@ -45,10 +45,6 @@ Remove-Item "C:\Users\Public\Desktop\EPOS Connect.lnk"
 Stop-Process -Name epos-connect
 Write-Host "Done"
 
-Write-Host "Installing Jabra Direct"
-choco install jabra-direct
-Write-Host "Done"
-
 Write-Host "Installing Stream Deck"
 choco install streamdeck
 Remove-Item "C:\Users\Public\Desktop\Stream Deck.lnk"
@@ -59,7 +55,7 @@ Write-Host "Installing Plex"
 choco install plex
 Write-Host "Done"
 
-Write-Host "Installing Plex"
+Write-Host "Installing Netflix"
 Winget install Netflix
 Write-Host "Done"
 
