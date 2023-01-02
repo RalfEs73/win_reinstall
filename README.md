@@ -33,6 +33,7 @@ iex ((New-Object System.Net.WebClient).DownloadString('https://raw.githubusercon
 * Windows 365 Preview
 * Translator
 * Screenbits
+* Microsoft Whiteboard
 * VLC (nicht bei Business)
 * AnyStream (nicht bei Business)
 * FileBot (nicht bei Business)

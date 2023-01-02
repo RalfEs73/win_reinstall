@@ -71,6 +71,10 @@ Write-Host "Installing Screenbits"
 Winget install 9P65DCKJFTJ3 --accept-package-agreements
 Write-Host "Done"
 
+Write-Host "Installing Microsoft Whiteboard"
+Winget install 9MSPC6MP8FM4 --accept-package-agreements
+Write-Host "Done"
+
 Write-Host "Installing VLC"
 choco install vlc
 Remove-Item "C:\Users\Public\Desktop\VLC media player.lnk"
