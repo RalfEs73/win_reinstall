@@ -30,6 +30,9 @@ iex ((New-Object System.Net.WebClient).DownloadString('https://raw.githubusercon
 * Stream Deck (nicht bei Business)
 * Plex
 * Netflix
+* Windows 365 Preview
+* Translator
+* Screenbits
 * VLC (nicht bei Business)
 * AnyStream (nicht bei Business)
 * FileBot (nicht bei Business)

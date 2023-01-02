@@ -41,7 +41,19 @@ choco install plex
 Write-Host "Done"
 
 Write-Host "Installing Netflix"
-Winget install Netflix
+Winget install Netflix --accept-package-agreements
+Write-Host "Done"
+
+Write-Host "Installing Windows 365 Preview"
+Winget install 9N1F85V9T8BN --accept-package-agreements
+Write-Host "Done"
+
+Write-Host "Installing Translator"
+Winget install 9WZDNCRFJ3PG --accept-package-agreements
+Write-Host "Done"
+
+Write-Host "Installing Screenbits"
+Winget install 9P65DCKJFTJ3 --accept-package-agreements
 Write-Host "Done"
 
 Write-Host "Installing File Converter"
