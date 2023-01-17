@@ -90,7 +90,7 @@ Remove-Item "C:\Users\Public\Desktop\AnyStream.lnk"
 Write-Host "Done"
 
 Write-Host "Installing FileBot"
-choco install filebot
+Winget install 9NBLGGH52T9X --accept-package-agreements
 Write-Host "Done"
 
 Write-Host "Installing File Converter"
