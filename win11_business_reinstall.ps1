@@ -29,7 +29,7 @@ Write-Host "Done"
 Write-Host "Installing EPOS Connect"
 choco install epos-connect
 Remove-Item "C:\Users\Public\Desktop\EPOS Connect.lnk"
-Stop-Process -Name epos-connect
+Get-Process -Name 'epos-connect' -ErrorAction SilentlyContinue | Stop-Process
 Write-Host "Done"
 
 Write-Host "Installing Jabra Direct"
@@ -71,7 +71,7 @@ Write-Host "Done"
 Write-Host "Installing GitHub Desktop"
 choco install github-desktop
 Remove-Item "C:\Users\$CurrentUserName\Desktop\GitHub Desktop.lnk"
-Stop-Process -Name GitHubDesktop
+Get-Process -Name 'GitHubDesktop' -ErrorAction SilentlyContinue | Stop-Process
 choco pin add -n=github-desktop
 Write-Host "Done"
 

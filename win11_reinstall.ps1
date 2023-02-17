@@ -42,13 +42,13 @@ Write-Host "Done"
 Write-Host "Installing EPOS Connect"
 choco install epos-connect
 Remove-Item "C:\Users\Public\Desktop\EPOS Connect.lnk"
-Stop-Process -Name epos-connect
+Get-Process -Name 'epos-connect' -ErrorAction SilentlyContinue | Stop-Process
 Write-Host "Done"
 
 Write-Host "Installing Stream Deck"
 choco install streamdeck
 Remove-Item "C:\Users\Public\Desktop\Stream Deck.lnk"
-Stop-Process -Name "Stream*"
+Get-Process -Name 'StreamDeck' -ErrorAction SilentlyContinue | Stop-Process
 Write-Host "Done"
 
 Write-Host "Installing Plex"
@@ -132,7 +132,7 @@ Write-Host "Done"
 Write-Host "Installing GitHub Desktop"
 choco install github-desktop
 Remove-Item "C:\Users\$CurrentUserName\Desktop\GitHub Desktop.lnk"
-Stop-Process -Name GitHubDesktop
+Get-Process -Name 'GitHubDesktop' -ErrorAction SilentlyContinue | Stop-Process
 choco pin add -n=github-desktop
 Write-Host "Done"
 
