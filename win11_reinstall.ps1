@@ -103,9 +103,7 @@ Remove-Item "C:\Users\Public\Desktop\WinSCP.lnk"
 Write-Host "Done"
 
 Write-Host "Install WhatsApp"
-choco install whatsapp
-Remove-Item "C:\Users\$CurrentUserName\Desktop\WhatsApp.lnk"
-choco pin add -n whatsapp
+winget install 9NKSQGP7F2NH --accept-package-agreements
 Write-Host "Done"
 
 Write-Host "Install Telegram"
