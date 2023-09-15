@@ -14,10 +14,6 @@ choco feature enable --name=allowGlobalConfirmation
 choco feature enable -n=useRememberedArgumentsForUpgrades
 Write-Host "Done"
 
-Write-Host "Installing gsudo"
-choco install gsudo
-Write-Host "Done"
-
 Write-Host "Installing Notepad++"
 choco install notepadplusplus.install
 Write-Host "Done"

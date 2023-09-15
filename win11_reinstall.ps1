@@ -22,10 +22,6 @@ Write-Host "Installing WinRAR"
 choco install winrar
 Write-Host "Done"
 
-Write-Host "Installing gsudo"
-choco install gsudo
-Write-Host "Done"
-
 Write-Host "Installing Notepad++"
 choco install notepadplusplus.install
 Write-Host "Done"
