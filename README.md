@@ -21,6 +21,7 @@ iex ((New-Object System.Net.WebClient).DownloadString('https://raw.githubusercon
 ## Die folgenden Anwendungen werden installiert:
 * Chocolatey Core
 * ChocoUpdateNotifier
+* Windows Terminal
 * WinRAR (nicht bei Business)
 * Notepad++
 * 4K Video Downloader (nicht bei Business)
@@ -50,7 +51,7 @@ iex ((New-Object System.Net.WebClient).DownloadString('https://raw.githubusercon
 * Film Info! Organiser (nicht bei Business)
 
 ## Settings
-* Windows Termial
+* Windows Terminal
 
 ## Die folgenden Anwendungen werden deinstalliert:
 * -
