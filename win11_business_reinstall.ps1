@@ -18,6 +18,10 @@ Write-Host "Installing ChocoUpdateNotifier"
 choco install choco-update-notifier
 Write-Host "Done"
 
+Write-Host "Installing PowerShell"
+choco install powershell-core
+Write-Host "Done"
+
 Write-Host "Installing Windows Terminal"
 choco install microsoft-windows-terminal
 Write-Host "Done"

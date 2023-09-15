@@ -21,6 +21,7 @@ iex ((New-Object System.Net.WebClient).DownloadString('https://raw.githubusercon
 ## Die folgenden Anwendungen werden installiert:
 * Chocolatey Core
 * ChocoUpdateNotifier
+* PowerShell
 * Windows Terminal
 * WinRAR (nicht bei Business)
 * Notepad++
