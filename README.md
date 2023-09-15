@@ -31,7 +31,7 @@ iex ((New-Object System.Net.WebClient).DownloadString('https://raw.githubusercon
 * Netflix
 * Prime Video for Windows
 * Windows 365 Preview
-* Translator
+* Translatium
 * Screenbits
 * Microsoft Whiteboard
 * VLC (nicht bei Business)
