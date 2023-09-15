@@ -20,8 +20,8 @@ iex ((New-Object System.Net.WebClient).DownloadString('https://raw.githubusercon
 ```
 ## Die folgenden Anwendungen werden installiert:
 * Chocolatey Core
-* WinRAR (nicht bei Business)
 * ChocoUpdateNotifier
+* WinRAR (nicht bei Business)
 * Notepad++
 * 4K Video Downloader (nicht bei Business)
 * Image Resizer for Windows
