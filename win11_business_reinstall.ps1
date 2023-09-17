@@ -30,6 +30,10 @@ Write-Host "Installing Notepad++"
 choco install notepadplusplus.install
 Write-Host "Done"
 
+Write-Host "Nearby Share"
+choco install nearby-share
+Write-Host "Done"
+
 Write-Host "Installing Image Resizer for Windows"
 choco install imageresizerapp
 Write-Host "Done"

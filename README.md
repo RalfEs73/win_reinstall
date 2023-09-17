@@ -25,6 +25,7 @@ iex ((New-Object System.Net.WebClient).DownloadString('https://raw.githubusercon
 * Windows Terminal
 * WinRAR (nicht bei Business)
 * Notepad++
+* Nearby Share
 * 4K Video Downloader (nicht bei Business)
 * Image Resizer for Windows
 * EPOS Connect

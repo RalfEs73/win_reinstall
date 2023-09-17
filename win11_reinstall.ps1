@@ -34,6 +34,10 @@ Write-Host "Installing Notepad++"
 choco install notepadplusplus.install
 Write-Host "Done"
 
+Write-Host "Nearby Share"
+choco install nearby-share
+Write-Host "Done"
+
 Write-Host "Installing 4K Video Downloader"
 choco install 4k-video-downloader
 Remove-Item "C:\Users\Public\Desktop\4K Video Downloader.lnk"
