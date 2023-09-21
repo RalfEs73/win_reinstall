@@ -33,6 +33,7 @@ iex ((New-Object System.Net.WebClient).DownloadString('https://raw.githubusercon
 * Plex
 * Netflix
 * Prime Video for Windows
+* 2fast - Two Factor Authenticator (nicht bei Business)
 * Windows 365 Preview
 * Translatium
 * Screenbits
