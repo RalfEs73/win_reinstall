@@ -44,7 +44,7 @@ Remove-Item "C:\Users\Public\Desktop\4K Video Downloader.lnk"
 Write-Host "Done"
 
 Write-Host "Installing Image Resizer for Windows"
-winget.exe install --id BriceLambson.ImageResizerforWindows --exact --accept-source-agreements --silent --disable-interactivity --accept-package-agreements
+choco install imageresizerapp
 Write-Host "Done"
 
 Write-Host "Installing EPOS Connect"
@@ -64,27 +64,27 @@ choco install plex
 Write-Host "Done"
 
 Write-Host "Installing Netflix"
-winget install --id 9WZDNCRFJ3TJ --exact --accept-source-agreements --silent --disable-interactivity --accept-package-agreements
+Winget install Netflix --accept-package-agreements
 Write-Host "Done"
 
 Write-Host "Installing Prime Video for Windows"
-winget install --id 9P6RC76MSMMJ --exact --accept-source-agreements --silent --disable-interactivity --accept-package-agreements
+Winget install 9P6RC76MSMMJ --accept-package-agreements
 Write-Host "Done"
 
 Write-Host "Installing 2fast - Two Factor Authenticator"
-winget install --id 9P9D81GLH89Q --exact --accept-source-agreements --silent --disable-interactivity --accept-package-agreements
+Winget install 9P9D81GLH89Q --accept-package-agreements
 Write-Host "Done"
 
 Write-Host "Installing Translatium"
-winget install --id 9MWPG56JKS38 --exact --accept-source-agreements --silent --disable-interactivity --accept-package-agreements
+Winget install 9MWPG56JKS38 --accept-package-agreements
 Write-Host "Done"
 
 Write-Host "Installing Screenbits"
-winget install --id 9P65DCKJFTJ3 --exact --accept-source-agreements --silent --disable-interactivity --accept-package-agreements
+Winget install 9P65DCKJFTJ3 --accept-package-agreements
 Write-Host "Done"
 
 Write-Host "Installing Microsoft Whiteboard"
-winget install --id 9MSPC6MP8FM4 --exact --accept-source-agreements --silent --disable-interactivity --accept-package-agreements
+Winget install 9MSPC6MP8FM4 --accept-package-agreements
 Write-Host "Done"
 
 Write-Host "Installing VLC"
@@ -98,11 +98,11 @@ Remove-Item "C:\Users\Public\Desktop\AnyStream.lnk"
 Write-Host "Done"
 
 Write-Host "Installing FileBot"
-winget install --id 9NBLGGH52T9X --exact --accept-source-agreements --silent --disable-interactivity --accept-package-agreements
+Winget install 9NBLGGH52T9X --accept-package-agreements
 Write-Host "Done"
 
 Write-Host "Installing File Converter"
-winget install --id AdrienAllard.FileConverter --exact --accept-source-agreements --silent --disable-interactivity --accept-package-agreements
+choco install file-converter
 Write-Host "Done"
 
 Write-Host "Installing WinSCP"
@@ -111,7 +111,7 @@ Remove-Item "C:\Users\Public\Desktop\WinSCP.lnk"
 Write-Host "Done"
 
 Write-Host "Install WhatsApp"
-winget install --id 9NKSQGP7F2NH --exact --accept-source-agreements --silent --disable-interactivity --accept-package-agreements
+winget install 9NKSQGP7F2NH --accept-package-agreements
 Write-Host "Done"
 
 Write-Host "Install Telegram"
@@ -143,7 +143,7 @@ choco pin add -n=github-desktop
 Write-Host "Done"
 
 Write-Host "Installing Ledger Live Wallet"
-winget install --id LedgerHQ.LedgerLive --exact --accept-source-agreements --silent --disable-interactivity --accept-package-agreements
+choco install ledger-live
 Remove-Item "C:\Users\Public\Desktop\Ledger Live.lnk"
 Write-Host "Done"
 

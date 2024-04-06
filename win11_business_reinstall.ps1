@@ -35,7 +35,7 @@ choco install nearby-share
 Write-Host "Done"
 
 Write-Host "Installing Image Resizer for Windows"
-choco install imageresizerapp
+winget.exe install --id BriceLambson.ImageResizerforWindows --exact --accept-source-agreements --silent --disable-interactivity --accept-package-agreements
 Write-Host "Done"
 
 Write-Host "Installing EPOS Connect"
