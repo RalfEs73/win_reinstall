@@ -75,10 +75,6 @@ Write-Host "Installing 2fast - Two Factor Authenticator"
 Winget install 9P9D81GLH89Q --accept-package-agreements
 Write-Host "Done"
 
-Write-Host "Installing Windows 365 Preview"
-Winget install 9N1F85V9T8BN --accept-package-agreements
-Write-Host "Done"
-
 Write-Host "Installing Translatium"
 Winget install 9MWPG56JKS38 --accept-package-agreements
 Write-Host "Done"

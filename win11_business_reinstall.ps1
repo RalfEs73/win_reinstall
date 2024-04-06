@@ -60,10 +60,6 @@ Write-Host "Installing Prime Video for Windows"
 Winget install 9P6RC76MSMMJ --accept-package-agreements
 Write-Host "Done"
 
-Write-Host "Installing Windows 365 Preview"
-Winget install 9N1F85V9T8BN --accept-package-agreements
-Write-Host "Done"
-
 Write-Host "Installing Translatium"
 Winget install 9MWPG56JKS38 --accept-package-agreements
 Write-Host "Done"
