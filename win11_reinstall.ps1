@@ -44,7 +44,7 @@ Remove-Item "C:\Users\Public\Desktop\4K Video Downloader.lnk"
 Write-Host "Done"
 
 Write-Host "Installing Image Resizer for Windows"
-winget.exe install --id BriceLambson.ImageResizerforWindows --exact --accept-source-agreements --silent --disable-interactivity --accept-package-agreements
+winget install --id BriceLambson.ImageResizerforWindows --exact --accept-source-agreements --silent --disable-interactivity --accept-package-agreements
 Write-Host "Done"
 
 Write-Host "Installing EPOS Connect"
@@ -57,6 +57,10 @@ Write-Host "Installing Stream Deck"
 choco install streamdeck
 Remove-Item "C:\Users\Public\Desktop\Stream Deck.lnk"
 Get-Process -Name 'StreamDeck' -ErrorAction SilentlyContinue | Stop-Process
+Write-Host "Done"
+
+Write-Host "Installing Outlook for Windows"
+winget install --id 9NRX63209R7B --exact --accept-source-agreements --silent --disable-interactivity --accept-package-agreements
 Write-Host "Done"
 
 Write-Host "Installing Plex"
