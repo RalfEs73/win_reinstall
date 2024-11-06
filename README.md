@@ -14,6 +14,16 @@ Mit PowerShell (und Adminrechten) den folgenden Befehl starten:
 ```sh
 iex ((New-Object System.Net.WebClient).DownloadString('https://raw.githubusercontent.com/RalfEs73/win_reinstall/main/win11_reinstall.ps1'))
 ```
+
+### Windows 11 (Test)
+```sh
+iex ((New-Object System.Net.WebClient).DownloadString('https://raw.githubusercontent.com/RalfEs73/win_reinstall/main/win11_reinstall_test.ps1'))
+```
+```sh
+iex ((New-Object System.Net.WebClient).DownloadString('https://raw.githubusercontent.com/RalfEs73/win_reinstall/main/win11_reinstall_apps.ps1'))
+```
+
+
 ### Windows 11 (Business)
 ```sh
 iex ((New-Object System.Net.WebClient).DownloadString('https://raw.githubusercontent.com/RalfEs73/win_reinstall/main/win11_business_reinstall.ps1'))
