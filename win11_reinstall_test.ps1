@@ -38,11 +38,6 @@ Write-Host "Nearby Share"
 choco install nearby-share
 Write-Host "Done"
 
-Write-Host "Installing 4K Video Downloader"
-choco install 4k-video-downloader
-Remove-Item "C:\Users\Public\Desktop\4K Video Downloader.lnk"
-Write-Host "Done"
-
 Write-Host "Installing Image Resizer for Windows"
 choco install imageresizerapp
 Write-Host "Done"
@@ -59,46 +54,9 @@ Remove-Item "C:\Users\Public\Desktop\Stream Deck.lnk"
 Get-Process -Name 'StreamDeck' -ErrorAction SilentlyContinue | Stop-Process
 Write-Host "Done"
 
-Write-Host "Installing Plex"
-choco install plex
-Write-Host "Done"
-
-Write-Host "Installing Netflix"
-Winget install Netflix --accept-package-agreements
-Write-Host "Done"
-
-Write-Host "Installing Prime Video for Windows"
-Winget install 9P6RC76MSMMJ --accept-package-agreements
-Write-Host "Done"
-
-Write-Host "Installing 2fast - Two Factor Authenticator"
-Winget install 9P9D81GLH89Q --accept-package-agreements
-Write-Host "Done"
-
-Write-Host "Installing Translatium"
-Winget install 9MWPG56JKS38 --accept-package-agreements
-Write-Host "Done"
-
-Write-Host "Installing Screenbits"
-Winget install 9P65DCKJFTJ3 --accept-package-agreements
-Write-Host "Done"
-
-Write-Host "Installing Microsoft Whiteboard"
-Winget install 9MSPC6MP8FM4 --accept-package-agreements
-Write-Host "Done"
-
 Write-Host "Installing VLC"
 choco install vlc
 Remove-Item "C:\Users\Public\Desktop\VLC media player.lnk"
-Write-Host "Done"
-
-Write-Host "Installing AnyStream"
-choco install anystream
-Remove-Item "C:\Users\Public\Desktop\AnyStream.lnk"
-Write-Host "Done"
-
-Write-Host "Installing FileBot"
-Winget install 9NBLGGH52T9X --accept-package-agreements
 Write-Host "Done"
 
 Write-Host "Installing File Converter"
@@ -110,18 +68,10 @@ choco install winscp
 Remove-Item "C:\Users\Public\Desktop\WinSCP.lnk"
 Write-Host "Done"
 
-Write-Host "Install WhatsApp"
-winget install 9NKSQGP7F2NH --accept-package-agreements
-Write-Host "Done"
-
 Write-Host "Install Telegram"
 choco install telegram
 Remove-Item "C:\Users\$CurrentUserName\Desktop\Telegram.lnk"
 choco pin add -n telegram
-Write-Host "Done"
-
-Write-Host "Install microsip"
-choco install microsip
 Write-Host "Done"
 
 Write-Host "Install Discord"
@@ -149,19 +99,6 @@ Write-Host "Done"
 
 Write-Host "Installing Thumbico"
 choco install thumbico
-Write-Host "Done"
-
-Write-Host "Installing Film Info! Organiser"
-choco install film-info-organizer
-Remove-Item "C:\Users\Public\Desktop\Film Info! Organizer.lnk"
-New-Item -Path "C:\Users\$CurrentUserName\AppData\Roaming\film info! organizer" -ItemType directory -Force | Out-Null
-Start-BitsTransfer -Source "https://raw.githubusercontent.com/RalfEs73/chocolatey-packages/master/film-info-organizer/settings/Columns.xml" -Destination "C:\Users\$CurrentUserName\AppData\Roaming\film info! organizer\Columns.xml"
-Start-BitsTransfer -Source "https://raw.githubusercontent.com/RalfEs73/chocolatey-packages/master/film-info-organizer/settings/Config.xml" -Destination "C:\Users\$CurrentUserName\AppData\Roaming\film info! organizer\Config.xml"
-Start-BitsTransfer -Source "https://raw.githubusercontent.com/RalfEs73/chocolatey-packages/master/film-info-organizer/settings/Favoriten.xml" -Destination "C:\Users\$CurrentUserName\AppData\Roaming\film info! organizer\Favoriten.xml"
-Start-BitsTransfer -Source "https://raw.githubusercontent.com/RalfEs73/chocolatey-packages/master/film-info-organizer/settings/Filter.xml" -Destination "C:\Users\$CurrentUserName\AppData\Roaming\film info! organizer\Filter.xml"
-Start-BitsTransfer -Source "https://raw.githubusercontent.com/RalfEs73/chocolatey-packages/master/film-info-organizer/settings/Genre.xml" -Destination "C:\Users\$CurrentUserName\AppData\Roaming\film info! organizer\Genre.xml"
-Start-BitsTransfer -Source "https://raw.githubusercontent.com/RalfEs73/chocolatey-packages/master/film-info-organizer/settings/Interface.xml" -Destination "C:\Users\$CurrentUserName\AppData\Roaming\film info! organizer\Interface.xml"
-Start-BitsTransfer -Source "https://raw.githubusercontent.com/RalfEs73/chocolatey-packages/master/film-info-organizer/settings/tmdb_config.xml" -Destination "C:\Users\$CurrentUserName\AppData\Roaming\film info! organizer\tmdb_config.xml"
 Write-Host "Done"
 
 Write-Host "Settings Windows Termial"
