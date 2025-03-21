@@ -15,14 +15,10 @@ Mit PowerShell (und Adminrechten) den folgenden Befehl starten:
 iex ((New-Object System.Net.WebClient).DownloadString('https://raw.githubusercontent.com/RalfEs73/win_reinstall/main/win11_reinstall.ps1'))
 ```
 
-### Windows 11 (Test)
+### Windows 11 (für Surface Laptop mit Snapdragon CPU)
 ```sh
-iex ((New-Object System.Net.WebClient).DownloadString('https://raw.githubusercontent.com/RalfEs73/win_reinstall/main/win11_reinstall_test.ps1'))
+iex ((New-Object System.Net.WebClient).DownloadString('https://raw.githubusercontent.com/RalfEs73/win_reinstall/main/win11_reinstall_arm.ps1'))
 ```
-```sh
-iex ((New-Object System.Net.WebClient).DownloadString('https://raw.githubusercontent.com/RalfEs73/win_reinstall/main/win11_reinstall_apps.ps1'))
-```
-
 
 ### Windows 11 (Business)
 ```sh

@@ -24,6 +24,14 @@ Write-Host "Nearby Share"
 winget install Google.QuickShare --accept-package-agreements
 Write-Host "Done"
 
+Write-Host "Plex"
+winget install Plex.Plex  --accept-package-agreements
+Write-Host "Done"
+
+Write-Host "Installing Translatium"
+Winget install 9MWPG56JKS38 --accept-package-agreements
+Write-Host "Done"
+
 Write-Host "Installing GitHub Desktop"
 winget install GitHub.GitHubDesktop --accept-package-agreements
 Remove-Item "C:\Users\$CurrentUserName\Desktop\GitHub Desktop.lnk"
