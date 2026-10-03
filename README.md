@@ -30,8 +30,9 @@ Mit dem Parameter `-DryRun` werden nur die winget-IDs aufgelöst und der Install
 5. **Updates:** Danach werden alle weiteren winget-Pakete mit `winget upgrade --all` aktualisiert. Fehler dabei erzeugen nur eine Warnung.
 6. **Ordner und Schnellzugriff:** Die Ordner `C:\Temp` und `C:\GitHub` werden angelegt, falls sie fehlen. Im Datei-Explorer werden Dokumente, Bilder, Musik und Videos aus dem Schnellzugriff entfernt und die beiden Ordner angeheftet.
 7. **Aufräumen:** Plex und Discord werden nach der Installation wieder beendet, falls der Installer sie automatisch startet. Anschließend werden alle Verknüpfungen (`.lnk`, `.url`) vom Desktop des aktuellen Benutzers und von „Alle Benutzer“ gelöscht.
-8. **Taskleiste:** Die Taskleiste des aktuellen Benutzers enthält danach nur Explorer, Edge, Windows Terminal, GitHub Desktop, Claude, WhatsApp und Telegram. Alle anderen Pins, z. B. der Microsoft Store, werden entfernt. Dafür wird eine `LayoutModification.xml` geschrieben, der Registry-Schlüssel `Taskband` zurückgesetzt und der Explorer neu gestartet (Explorer-Fenster werden dabei kurz geschlossen).
-9. **Zusammenfassung:** Am Ende wird der Status jeder Anwendung ausgegeben.
+8. **Hintergrundbild:** Das Bild `Wallpaper/wallpaper.jpg` wird aus diesem Repository nach `Bilder\wallpaper.jpg` heruntergeladen und als Desktop-Hintergrund des aktuellen Benutzers gesetzt (Anpassung „Ausfüllen“).
+9. **Taskleiste:** Die Taskleiste des aktuellen Benutzers enthält danach nur Explorer, Edge, Windows Terminal, GitHub Desktop, Claude, WhatsApp und Telegram. Alle anderen Pins, z. B. der Microsoft Store, werden entfernt. Dafür wird eine `LayoutModification.xml` geschrieben, der Registry-Schlüssel `Taskband` zurückgesetzt und der Explorer neu gestartet (Explorer-Fenster werden dabei kurz geschlossen).
+10. **Zusammenfassung:** Am Ende wird der Status jeder Anwendung ausgegeben.
 
 Das Log wird nach `C:\Temp\win11_reinstall_<Zeitstempel>.log` geschrieben (das Verzeichnis wird bei Bedarf angelegt).
 

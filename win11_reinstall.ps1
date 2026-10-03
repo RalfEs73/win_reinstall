@@ -47,6 +47,9 @@ if ($logDir -and -not (Test-Path -LiteralPath $logDir)) {
 $ScriptUrl = 'https://raw.githubusercontent.com/RalfEs73/win_reinstall/main/win11_reinstall.ps1'
 $script:Relaunched = $false
 
+# Hintergrundbild (liegt im Repo unter Wallpaper/)
+$WallpaperUrl = 'https://raw.githubusercontent.com/RalfEs73/win_reinstall/main/Wallpaper/wallpaper.jpg'
+
 # Arbeitsordner: werden angelegt und an den Schnellzugriff des Datei-Explorers geheftet
 $WorkFolders = @('C:\Temp', 'C:\GitHub')
 
@@ -348,6 +351,37 @@ function Remove-DesktopShortcuts {
     }
 }
 
+function Set-DesktopWallpaper {
+    <# Lädt das Hintergrundbild aus dem GitHub-Repo herunter und setzt es als Desktop-Hintergrund des aktuellen Benutzers. #>
+    $target = Join-Path ([Environment]::GetFolderPath('MyPictures')) 'wallpaper.jpg'
+    if ($DryRun) { Write-Log "Hintergrundbild: würde $WallpaperUrl nach $target laden und setzen (DryRun)." -Level WARN; return }
+    try {
+        [Net.ServicePointManager]::SecurityProtocol = [Net.ServicePointManager]::SecurityProtocol -bor [Net.SecurityProtocolType]::Tls12
+        $targetDir = Split-Path -Path $target -Parent
+        if (-not (Test-Path -LiteralPath $targetDir)) { New-Item -Path $targetDir -ItemType Directory -Force | Out-Null }
+        Invoke-WebRequest -Uri $WallpaperUrl -OutFile $target -UseBasicParsing
+        Write-Log "Hintergrundbild heruntergeladen: $target"
+
+        # Anpassung 'Ausfüllen', nicht gekachelt
+        Set-ItemProperty -Path 'HKCU:\Control Panel\Desktop' -Name WallpaperStyle -Value '10'
+        Set-ItemProperty -Path 'HKCU:\Control Panel\Desktop' -Name TileWallpaper -Value '0'
+
+        if (-not ('Win32Wallpaper' -as [type])) {
+            Add-Type -TypeDefinition @'
+using System.Runtime.InteropServices;
+public class Win32Wallpaper {
+    [DllImport("user32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
+    public static extern bool SystemParametersInfo(int uAction, int uParam, string lpvParam, int fuWinIni);
+}
+'@
+        }
+        # SPI_SETDESKWALLPAPER = 20; SPIF_UPDATEINIFILE | SPIF_SENDCHANGE = 3
+        if ([Win32Wallpaper]::SystemParametersInfo(20, 0, $target, 3)) { Write-Log 'Hintergrundbild gesetzt.' -Level OK }
+        else { Write-Log 'Hintergrundbild konnte nicht gesetzt werden (SystemParametersInfo fehlgeschlagen).' -Level WARN }
+    }
+    catch { Write-Log "Hintergrundbild: $($_.Exception.Message)" -Level WARN }
+}
+
 function Set-TaskbarPins {
     <# Setzt die Taskleiste (aktueller Benutzer) per LayoutModification.xml auf: Explorer, Edge, Windows Terminal, GitHub Desktop, Claude, WhatsApp, Telegram.
        Windows 11 bietet keine offizielle Pin-API; die Datei wird durch Zurücksetzen von 'Taskband' und Explorer-Neustart angewendet. #>
@@ -452,6 +486,7 @@ function Main {
     New-WorkFolders
     Set-QuickAccess
     Remove-DesktopShortcuts
+    Set-DesktopWallpaper
     Set-TaskbarPins
     Write-Summary -Results @($results)
 
