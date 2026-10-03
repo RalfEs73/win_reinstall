@@ -45,6 +45,7 @@ if ($logDir -and -not (Test-Path -LiteralPath $logDir)) {
 
 # Quelle fuer den erhoehten Neustart, wenn das Skript per iex (ohne Datei) gestartet wurde
 $ScriptUrl = 'https://raw.githubusercontent.com/RalfEs73/win_reinstall/main/win11_reinstall.ps1'
+$script:Relaunched = $false
 
 # Arbeitsordner: werden angelegt und an den Schnellzugriff des Datei-Explorers geheftet
 $WorkFolders = @('C:\Temp', 'C:\GitHub')
@@ -437,6 +438,7 @@ function Main {
         }
         else {
             Write-Log 'Administratorrechte erforderlich - Skript wird mit erhoehten Rechten neu gestartet (UAC).'
+            $script:Relaunched = $true   # der erhoehte Prozess oeffnet das Log, nicht dieser
             return (Restart-AsAdministrator)
         }
     }
@@ -461,6 +463,11 @@ try { $code = Main }
 catch {
     Write-Log "Unerwarteter Fehler: $($_.Exception.Message)" -Level ERROR
     $code = 4
+}
+# Logdatei in Notepad oeffnen (nicht im Elternprozess, der nur den erhoehten Neustart ausloest)
+if (-not $script:Relaunched -and (Test-Path -LiteralPath $LogPath)) {
+    try { Start-Process -FilePath notepad.exe -ArgumentList "`"$LogPath`"" }
+    catch { Write-Log "Logdatei konnte nicht in Notepad geoeffnet werden: $($_.Exception.Message)" -Level WARN }
 }
 # Im automatisch erhoehten Fenster offen halten, damit die Ausgabe lesbar bleibt
 if ($env:WIN11_REINSTALL_PAUSE -eq '1') { Write-Host ''; Read-Host 'Zum Schliessen Enter druecken' | Out-Null }
