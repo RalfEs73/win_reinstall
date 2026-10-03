@@ -59,6 +59,7 @@ $Applications = @(
     [pscustomobject]@{ Name = 'EPOS Connect';				SearchTerm = 'EPOS Connect';		IdPattern = '^EPOS\.EPOSConnect$' }
     [pscustomobject]@{ Name = 'Stream Deck';				SearchTerm = 'Stream Deck';			IdPattern = '^Elgato\.StreamDeck$' }
     [pscustomobject]@{ Name = 'VLC';						SearchTerm = 'VLC';					IdPattern = '^VideoLAN\.VLC$' }
+    [pscustomobject]@{ Name = 'FileBot';					SearchTerm = 'FileBot';				IdPattern = '^PointPlanck\.FileBot$' }
     [pscustomobject]@{ Name = 'File Converter';				SearchTerm = 'File Converter';		IdPattern = '^AdrienAllard\.FileConverter$' }
     [pscustomobject]@{ Name = 'WhatsApp';					SearchTerm = 'WhatsApp';			IdPattern = '^9NKSQGP7F2NH$'; Source = 'msstore'; FixedId = '9NKSQGP7F2NH' }
     [pscustomobject]@{ Name = 'Telegram';					SearchTerm = 'Telegram';			IdPattern = '^Telegram\.TelegramDesktop$' }
