@@ -47,24 +47,24 @@ if ($logDir -and -not (Test-Path -LiteralPath $logDir)) {
 # FixedId     : (optional) feste ID (z. B. Store-ID); wird nur per 'winget search --id --exact' verifiziert
 # StopProcess : (optional) Prozessname, der nach der Installation beendet wird, falls der Installer die App startet
 $Applications = @(
-    [pscustomobject]@{ Name = 'Plex';              SearchTerm = 'Plex';              IdPattern = '^Plex\.Plex$'; StopProcess = 'Plex' }
-    [pscustomobject]@{ Name = 'PowerShell';        SearchTerm = 'PowerShell';        IdPattern = '^Microsoft\.PowerShell$' }
-    [pscustomobject]@{ Name = 'Windows Terminal';  SearchTerm = 'Windows Terminal';  IdPattern = '^Microsoft\.WindowsTerminal$' }
-    [pscustomobject]@{ Name = 'GitHub Desktop';    SearchTerm = 'GitHub Desktop';    IdPattern = '^GitHub\.GitHubDesktop$' }
-    [pscustomobject]@{ Name = 'Visual Studio Code'; SearchTerm = 'Visual Studio Code'; IdPattern = '^Microsoft\.VisualStudioCode$' }
-    [pscustomobject]@{ Name = 'Claude Desktop';    SearchTerm = 'Claude';            IdPattern = '^Anthropic\.Claude$' }
-    [pscustomobject]@{ Name = 'LocalSend';         SearchTerm = 'LocalSend';         IdPattern = '^LocalSend\.LocalSend$' }
-    [pscustomobject]@{ Name = 'WinRAR'; SearchTerm = 'WinRAR'; IdPattern = '^RARLab\.WinRAR$' }
-    [pscustomobject]@{ Name = 'Image Resizer for Windows'; SearchTerm = 'Resizer for Windows'; IdPattern = '^BriceLambson\.ImageResizerforWindows$' }
-    [pscustomobject]@{ Name = 'EPOS Connect'; SearchTerm = 'EPOS Connect'; IdPattern = '^EPOS\.EPOSConnect$' }
-    [pscustomobject]@{ Name = 'Stream Deck'; SearchTerm = 'Stream Deck'; IdPattern = '^Elgato\.StreamDeck$' }
-    [pscustomobject]@{ Name = 'VLC'; SearchTerm = 'VLC'; IdPattern = '^VideoLAN\.VLC$' }
-    [pscustomobject]@{ Name = 'File Converter'; SearchTerm = 'File Converter'; IdPattern = '^AdrienAllard\.FileConverter$' }
-    [pscustomobject]@{ Name = 'WhatsApp'; SearchTerm = 'WhatsApp'; IdPattern = '^9NKSQGP7F2NH$'; Source = 'msstore'; FixedId = '9NKSQGP7F2NH' }
-    [pscustomobject]@{ Name = 'Telegram'; SearchTerm = 'Telegram'; IdPattern = '^Telegram\.TelegramDesktop$' }
-    [pscustomobject]@{ Name = 'Discord'; SearchTerm = 'Discord'; IdPattern = '^Discord\.Discord$'; StopProcess = 'Discord' }
-    [pscustomobject]@{ Name = 'HandBrake'; SearchTerm = 'HandBrake'; IdPattern = '^HandBrake\.HandBrake$' }
-    [pscustomobject]@{ Name = 'Steam'; SearchTerm = 'Steam'; IdPattern = '^Valve\.Steam$' }
+    [pscustomobject]@{ Name = 'Plex';						SearchTerm = 'Plex';				IdPattern = '^Plex\.Plex$'; StopProcess = 'Plex' }
+    [pscustomobject]@{ Name = 'PowerShell';					SearchTerm = 'PowerShell';			IdPattern = '^Microsoft\.PowerShell$' }
+    [pscustomobject]@{ Name = 'Windows Terminal';			SearchTerm = 'Windows Terminal';	IdPattern = '^Microsoft\.WindowsTerminal$' }
+    [pscustomobject]@{ Name = 'GitHub Desktop';				SearchTerm = 'GitHub Desktop';		IdPattern = '^GitHub\.GitHubDesktop$' }
+    [pscustomobject]@{ Name = 'Visual Studio Code';			SearchTerm = 'Visual Studio Code';	IdPattern = '^Microsoft\.VisualStudioCode$' }
+    [pscustomobject]@{ Name = 'Claude Desktop';				SearchTerm = 'Claude';				IdPattern = '^Anthropic\.Claude$' }
+    [pscustomobject]@{ Name = 'LocalSend';					SearchTerm = 'LocalSend';			IdPattern = '^LocalSend\.LocalSend$' }
+    [pscustomobject]@{ Name = 'WinRAR';						SearchTerm = 'WinRAR';				IdPattern = '^RARLab\.WinRAR$' }
+    [pscustomobject]@{ Name = 'Image Resizer for Windows';	SearchTerm = 'Resizer for Windows';	IdPattern = '^BriceLambson\.ImageResizerforWindows$' }
+    [pscustomobject]@{ Name = 'EPOS Connect';				SearchTerm = 'EPOS Connect';		IdPattern = '^EPOS\.EPOSConnect$' }
+    [pscustomobject]@{ Name = 'Stream Deck';				SearchTerm = 'Stream Deck';			IdPattern = '^Elgato\.StreamDeck$' }
+    [pscustomobject]@{ Name = 'VLC';						SearchTerm = 'VLC';					IdPattern = '^VideoLAN\.VLC$' }
+    [pscustomobject]@{ Name = 'File Converter';				SearchTerm = 'File Converter';		IdPattern = '^AdrienAllard\.FileConverter$' }
+    [pscustomobject]@{ Name = 'WhatsApp';					SearchTerm = 'WhatsApp';			IdPattern = '^9NKSQGP7F2NH$'; Source = 'msstore'; FixedId = '9NKSQGP7F2NH' }
+    [pscustomobject]@{ Name = 'Telegram';					SearchTerm = 'Telegram';			IdPattern = '^Telegram\.TelegramDesktop$' }
+    [pscustomobject]@{ Name = 'Discord';					SearchTerm = 'Discord';				IdPattern = '^Discord\.Discord$'; StopProcess = 'Discord' }
+    [pscustomobject]@{ Name = 'HandBrake';					SearchTerm = 'HandBrake';			IdPattern = '^HandBrake\.HandBrake$' }
+    [pscustomobject]@{ Name = 'Steam';						SearchTerm = 'Steam';				IdPattern = '^Valve\.Steam$' }
 )
 
 # Optionale Eigenschaften mit Standardwerten ergaenzen (StrictMode-sicher)
