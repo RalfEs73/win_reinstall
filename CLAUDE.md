@@ -23,10 +23,11 @@ Ein echter Lauf loescht Desktop-Verknuepfungen und setzt die Taskleiste zurueck 
 
 ## Architektur
 
-Ablauf in `Main`: OS-Pruefung (`Win32_OperatingSystem.ProductType -eq 1`, sonst Exit 2) -> Admin-Pruefung -> winget-Pruefung -> pro App `Install-WingetApp` -> `Update-WingetPackages` -> `New-WorkFolders` -> `Set-QuickAccess` -> `Remove-DesktopShortcuts` -> `Set-DesktopWallpaper` -> `Set-TaskbarPins` -> `Write-Summary`.
+Ablauf in `Main`: OS-Pruefung (`Win32_OperatingSystem.ProductType -eq 1`, sonst Exit 2) -> Admin-Pruefung -> winget-Pruefung -> pro App `Install-WingetApp` -> `Update-WingetPackages` -> `New-WorkFolders` -> `Set-QuickAccess` -> `Set-ExplorerRecentSettings` -> `Remove-DesktopShortcuts` -> `Set-DesktopWallpaper` -> `Set-TaskbarPins` -> `Write-Summary`.
 
 - **Selbst-Elevation:** Ohne Adminrechte startet `Restart-AsAdministrator` das Skript per `Start-Process -Verb RunAs` neu und gibt den Exit-Code des Kindprozesses zurueck (nicht bei `-DryRun`). Bei `iex`-Aufruf gibt es keinen `$PSCommandPath`, dann laedt das Kind das Skript ueber `$ScriptUrl` erneut von GitHub. Das Kindfenster setzt `WIN11_REINSTALL_PAUSE=1` und bleibt am Ende per `Read-Host` offen. Nicht testbar ohne echten Lauf: ein Test fuehrt die Installation wirklich aus.
 - **Ordner/Schnellzugriff:** `$WorkFolders` (`C:\Temp`, `C:\GitHub`) wird von `New-WorkFolders` angelegt und von `Set-QuickAccess` per `Shell.Application` (Namespace `shell:::{679f85cb-...}`) an den Schnellzugriff geheftet (`pintohome`); Dokumente/Bilder/Musik/Videos werden ueber das lokalisierte Kontextmenue-Verb "Von Schnellzugriff loesen" entfernt. Wichtig: `Items()` unter Windows PowerShell 5.1 nur **einmal** aufzaehlen und das Ergebnis zwischenspeichern, ein zweiter Aufruf liefert eine leere Liste.
+- **Explorer-Vorschläge:** `Set-ExplorerRecentSettings` setzt unter `HKCU:\...\Explorer` die DWORDs `ShowRecent`, `ShowFrequent` und `ShowCloudFilesInQuickAccess` auf 0 (wirkt für neu geöffnete Explorer-Fenster).
 - **Hintergrundbild:** `Set-DesktopWallpaper` lädt `Wallpaper/wallpaper.jpg` über `$WallpaperUrl` (raw.githubusercontent.com, `main`) nach `%USERPROFILE%\Pictures\wallpaper.jpg` und setzt es per `SystemParametersInfo` (P/Invoke über `Add-Type`). Das Bild muss im Repo auf `main` liegen, sonst gibt es nur eine Warnung. Dateiname/Pfad dürfen sich nicht ändern, ohne `$WallpaperUrl` anzupassen.
 - **Updates:** `Update-WingetPackages` fuehrt `winget upgrade --all` aus; Fehler sind nur Warnungen (kein Exit-Code 1).
 

@@ -314,6 +314,25 @@ function Set-QuickAccess {
     catch { Write-Log "Schnellzugriff: $($_.Exception.Message)" -Level WARN }
 }
 
+function Set-ExplorerRecentSettings {
+    <# Schaltet im Datei-Explorer alle Vorschläge zu zuletzt verwendeten Dateien und häufigen Ordnern aus. #>
+    $key = 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer'
+    $settings = [ordered]@{
+        ShowRecent                  = 'Zuletzt verwendete Dateien im Schnellzugriff/Start anzeigen'
+        ShowFrequent                = 'Häufig verwendete Ordner im Schnellzugriff anzeigen'
+        ShowCloudFilesInQuickAccess = 'Empfohlene/Cloud-Dateien (Office.com) anzeigen'
+    }
+    foreach ($name in $settings.Keys) {
+        if ($DryRun) { Write-Log "Explorer: würde '$($settings[$name])' ausschalten (DryRun)." -Level WARN; continue }
+        try {
+            if (-not (Test-Path $key)) { New-Item -Path $key -Force | Out-Null }
+            Set-ItemProperty -Path $key -Name $name -Value 0 -Type DWord
+            Write-Log "Explorer: '$($settings[$name])' ausgeschaltet." -Level OK
+        }
+        catch { Write-Log "Explorer: '$name' konnte nicht gesetzt werden: $($_.Exception.Message)" -Level WARN }
+    }
+}
+
 function Update-WingetPackages {
     <# Aktualisiert alle weiteren per winget verwaltbaren Pakete. Fehler hierbei sind nur Warnungen. #>
     if ($DryRun) { Write-Log 'Updates: "winget upgrade --all" übersprungen (DryRun).' -Level WARN; return }
@@ -485,6 +504,7 @@ function Main {
     Update-WingetPackages
     New-WorkFolders
     Set-QuickAccess
+    Set-ExplorerRecentSettings
     Remove-DesktopShortcuts
     Set-DesktopWallpaper
     Set-TaskbarPins
