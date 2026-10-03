@@ -38,7 +38,8 @@ Ablauf in `Main`: OS-Pruefung (`Win32_OperatingSystem.ProductType -eq 1`, sonst 
 
 ## Konventionen
 
-- Das Skript soll unter Windows PowerShell 5.1 laufen. Log- und Konsolenmeldungen bewusst ASCII (ae/oe/ue statt Umlaute), weil die Datei BOM-los UTF-8 ist.
+- Das Skript soll unter Windows PowerShell 5.1 laufen. Meldungen, Kommentare und Hilfetexte verwenden **echte deutsche Umlaute** (ä, ö, ü, ß), keine Umschreibungen.
+- Die Skriptdatei muss **UTF-8 mit BOM** bleiben, sonst liest Windows PowerShell 5.1 sie bei `-File` als ANSI und die Umlaute sind kaputt. Der `iex`-Aufruf ist davon nicht betroffen, weil `WebClient.DownloadString` das BOM entfernt. Beim Bearbeiten per Skript `utf-8-sig` verwenden.
 - Die Datei hat CRLF-Zeilenenden. Beim Bearbeiten ueber Skripte `newline=''` verwenden, um sie nicht zu veraendern.
 - Die Eintraege in `$Applications` sind mit **Tabulatoren** (Tabbreite 4) in Spalten ausgerichtet. Beim Hinzufuegen einer App die Spalten wieder ausrichten.
 - `README.md`: Der direkte Aufruf-Link und das YouTube-Video muessen unveraendert bleiben. Die Anwendungsliste dort muss mit `$Applications` uebereinstimmen, ebenso die Beschreibung des Ablaufs.
