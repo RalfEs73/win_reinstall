@@ -27,7 +27,7 @@ Mit dem Parameter `-DryRun` werden nur die winget-IDs aufgelöst und der Install
 2. **winget-Prüfung:** Ist winget nicht verfügbar, bricht das Skript ab.
 3. **Installation:** Die winget-IDs werden per `winget search` ermittelt, jede Anwendung wird einzeln installiert. Bereits installierte Anwendungen werden übersprungen, das Skript kann also mehrfach ausgeführt werden.
 4. **Aufräumen:** Plex und Discord werden nach der Installation wieder beendet, falls der Installer sie automatisch startet. Anschließend werden alle Verknüpfungen (`.lnk`, `.url`) vom Desktop des aktuellen Benutzers und von „Alle Benutzer“ gelöscht.
-5. **Taskleiste:** Windows Terminal, GitHub Desktop und Claude werden an die Taskleiste des aktuellen Benutzers angeheftet. Dafür wird eine `LayoutModification.xml` geschrieben, der Registry-Schlüssel `Taskband` zurückgesetzt und der Explorer neu gestartet (Explorer-Fenster werden dabei kurz geschlossen).
+5. **Taskleiste:** Die Taskleiste des aktuellen Benutzers enthält danach nur Explorer, Edge, Windows Terminal, GitHub Desktop und Claude. Alle anderen Pins, z. B. der Microsoft Store, werden entfernt. Dafür wird eine `LayoutModification.xml` geschrieben, der Registry-Schlüssel `Taskband` zurückgesetzt und der Explorer neu gestartet (Explorer-Fenster werden dabei kurz geschlossen).
 6. **Zusammenfassung:** Am Ende wird der Status jeder Anwendung ausgegeben.
 
 Das Log wird nach `C:\Temp\win11_reinstall_<Zeitstempel>.log` geschrieben (das Verzeichnis wird bei Bedarf angelegt).
@@ -54,6 +54,7 @@ Das Log wird nach `C:\Temp\win11_reinstall_<Zeitstempel>.log` geschrieben (das V
 * EPOS Connect
 * Stream Deck
 * VLC
+* FileBot
 * File Converter
 * WhatsApp (Microsoft Store)
 * Telegram
