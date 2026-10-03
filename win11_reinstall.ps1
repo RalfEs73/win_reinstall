@@ -255,7 +255,7 @@ function Remove-DesktopShortcuts {
 }
 
 function Set-TaskbarPins {
-    <# Heftet Windows Terminal, GitHub Desktop und Claude per LayoutModification.xml an die Taskleiste (aktueller Benutzer).
+    <# Setzt die Taskleiste (aktueller Benutzer) per LayoutModification.xml auf: Explorer, Edge, Windows Terminal, GitHub Desktop, Claude.
        Windows 11 bietet keine offizielle Pin-API; die Datei wird durch Zuruecksetzen von 'Taskband' und Explorer-Neustart angewendet. #>
     $wanted = @(
         [pscustomobject]@{ Name = 'Windows Terminal'; Pattern = '^(Windows )?Terminal$' }
@@ -276,6 +276,13 @@ function Set-TaskbarPins {
         }
         if (-not $pins) { Write-Log 'Taskleiste: keine Anwendung gefunden, nichts zu tun.' -Level WARN; return }
 
+        # Die Pin-Liste wird ersetzt (Replace): alle anderen Standard-Pins, z. B. der Microsoft Store, entfallen.
+        # Explorer und Edge bleiben daher ausdruecklich erhalten.
+        $pins = @(
+            '        <taskbar:DesktopApp DesktopApplicationID="Microsoft.Windows.Explorer" />'
+            '        <taskbar:DesktopApp DesktopApplicationID="MSEdge" />'
+        ) + @($pins)
+
         if ($DryRun) { Write-Log 'Taskleiste: Anheften uebersprungen (DryRun).' -Level WARN; return }
 
         $xml = @"
@@ -286,7 +293,7 @@ function Set-TaskbarPins {
     xmlns:start="http://schemas.microsoft.com/Start/2014/StartLayout"
     xmlns:taskbar="http://schemas.microsoft.com/Start/2014/TaskbarLayout"
     Version="1">
-  <CustomTaskbarLayoutCollection PinListPlacement="Add">
+  <CustomTaskbarLayoutCollection PinListPlacement="Replace">
     <defaultlayout:TaskbarLayout>
       <taskbar:TaskbarPinList>
 $($pins -join "`r`n")
