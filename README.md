@@ -24,11 +24,14 @@ Mit dem Parameter `-DryRun` werden nur die winget-IDs aufgelöst und der Install
 
 ## Ablauf
 1. **Systemprüfung:** Das Skript läuft nur auf Windows-Clients (Windows 10/11). Auf Windows Server bricht es sofort ab.
-2. **winget-Prüfung:** Ist winget nicht verfügbar, bricht das Skript ab.
-3. **Installation:** Die winget-IDs werden per `winget search` ermittelt, jede Anwendung wird einzeln installiert. Bereits installierte Anwendungen werden übersprungen, das Skript kann also mehrfach ausgeführt werden.
-4. **Aufräumen:** Plex und Discord werden nach der Installation wieder beendet, falls der Installer sie automatisch startet. Anschließend werden alle Verknüpfungen (`.lnk`, `.url`) vom Desktop des aktuellen Benutzers und von „Alle Benutzer“ gelöscht.
-5. **Taskleiste:** Die Taskleiste des aktuellen Benutzers enthält danach nur Explorer, Edge, Windows Terminal, GitHub Desktop und Claude. Alle anderen Pins, z. B. der Microsoft Store, werden entfernt. Dafür wird eine `LayoutModification.xml` geschrieben, der Registry-Schlüssel `Taskband` zurückgesetzt und der Explorer neu gestartet (Explorer-Fenster werden dabei kurz geschlossen).
-6. **Zusammenfassung:** Am Ende wird der Status jeder Anwendung ausgegeben.
+2. **Administratorrechte:** Läuft das Skript ohne Adminrechte, startet es sich selbst neu und fragt per UAC nach (nicht bei `-DryRun`). Wird die Abfrage abgelehnt, bricht es ab. Das erhöhte Fenster bleibt am Ende offen, bis Enter gedrückt wird.
+3. **winget-Prüfung:** Ist winget nicht verfügbar, bricht das Skript ab.
+4. **Installation:** Die winget-IDs werden per `winget search` ermittelt, jede Anwendung wird einzeln installiert. Bereits installierte Anwendungen werden übersprungen, das Skript kann also mehrfach ausgeführt werden.
+5. **Updates:** Danach werden alle weiteren winget-Pakete mit `winget upgrade --all` aktualisiert. Fehler dabei erzeugen nur eine Warnung.
+6. **Ordner und Schnellzugriff:** Die Ordner `C:\Temp` und `C:\GitHub` werden angelegt, falls sie fehlen. Im Datei-Explorer werden Dokumente, Bilder, Musik und Videos aus dem Schnellzugriff entfernt und die beiden Ordner angeheftet.
+7. **Aufräumen:** Plex und Discord werden nach der Installation wieder beendet, falls der Installer sie automatisch startet. Anschließend werden alle Verknüpfungen (`.lnk`, `.url`) vom Desktop des aktuellen Benutzers und von „Alle Benutzer“ gelöscht.
+8. **Taskleiste:** Die Taskleiste des aktuellen Benutzers enthält danach nur Explorer, Edge, Windows Terminal, GitHub Desktop, Claude, WhatsApp und Telegram. Alle anderen Pins, z. B. der Microsoft Store, werden entfernt. Dafür wird eine `LayoutModification.xml` geschrieben, der Registry-Schlüssel `Taskband` zurückgesetzt und der Explorer neu gestartet (Explorer-Fenster werden dabei kurz geschlossen).
+9. **Zusammenfassung:** Am Ende wird der Status jeder Anwendung ausgegeben.
 
 Das Log wird nach `C:\Temp\win11_reinstall_<Zeitstempel>.log` geschrieben (das Verzeichnis wird bei Bedarf angelegt).
 
@@ -40,6 +43,7 @@ Das Log wird nach `C:\Temp\win11_reinstall_<Zeitstempel>.log` geschrieben (das V
 | 2 | Betriebssystem ist kein Windows-Client (z. B. Windows Server) |
 | 3 | winget ist nicht verfügbar |
 | 4 | Unerwarteter Fehler |
+| 5 | Administratorrechte nicht erteilt (UAC abgelehnt) |
 
 ## Die folgenden Anwendungen werden installiert:
 * Plex

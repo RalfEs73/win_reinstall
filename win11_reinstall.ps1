@@ -7,7 +7,9 @@
     - Prueft, ob winget verfuegbar ist (Exit-Code 3).
     - Ermittelt die winget-IDs automatisch per 'winget search'.
     - Ueberspringt bereits installierte Anwendungen (idempotent).
+    - Startet sich ohne Administratorrechte selbst mit UAC neu (ausser bei -DryRun).
     - Installiert jede Anwendung einzeln, faengt Fehler ab und gibt am Ende eine Zusammenfassung aus.
+    - Aktualisiert danach alle weiteren winget-Pakete (winget upgrade --all).
 
 .PARAMETER DryRun
     Loest IDs auf und prueft den Installationsstatus, installiert aber nichts.
@@ -22,6 +24,7 @@
       2 = Betriebssystem ist kein Windows-Client (z. B. Windows Server)
       3 = winget nicht verfuegbar
       4 = unerwarteter Fehler
+      5 = Administratorrechte nicht erteilt (UAC abgelehnt)
 #>
 [CmdletBinding()]
 param(
@@ -39,6 +42,12 @@ if ($logDir -and -not (Test-Path -LiteralPath $logDir)) {
     try { New-Item -Path $logDir -ItemType Directory -Force | Out-Null }
     catch { Write-Warning "Logverzeichnis '$logDir' konnte nicht erstellt werden: $($_.Exception.Message)" }
 }
+
+# Quelle fuer den erhoehten Neustart, wenn das Skript per iex (ohne Datei) gestartet wurde
+$ScriptUrl = 'https://raw.githubusercontent.com/RalfEs73/win_reinstall/main/win11_reinstall.ps1'
+
+# Arbeitsordner: werden angelegt und an den Schnellzugriff des Datei-Explorers geheftet
+$WorkFolders = @('C:\Temp', 'C:\GitHub')
 
 # --- Konfiguration -----------------------------------------------------------
 # SearchTerm  : Suchbegriff fuer 'winget search'
@@ -102,6 +111,27 @@ function Test-WindowsClient {
 function Test-IsAdministrator {
     $id = [Security.Principal.WindowsIdentity]::GetCurrent()
     return ([Security.Principal.WindowsPrincipal]$id).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)
+}
+
+function Restart-AsAdministrator {
+    <# Startet das Skript in einem neuen, erhoehten PowerShell-Prozess (UAC) und liefert dessen Exit-Code.
+       Funktioniert als Datei (-File-Aufruf) und beim Aufruf per iex (Skript wird dann erneut von GitHub geladen). #>
+    $paused = '$env:WIN11_REINSTALL_PAUSE = ''1''; '
+    if ($PSCommandPath) {
+        $command = $paused + "& '$PSCommandPath' -LogPath '$LogPath'"
+    }
+    else {
+        $command = $paused + "iex ((New-Object System.Net.WebClient).DownloadString('$ScriptUrl'))"
+    }
+    try {
+        $process = Start-Process -FilePath (Get-Process -Id $PID).Path -Verb RunAs -Wait -PassThru `
+            -ArgumentList '-NoProfile', '-ExecutionPolicy', 'Bypass', '-Command', "`"$command`""
+        return $process.ExitCode
+    }
+    catch {
+        Write-Log "Abbruch: Start mit Administratorrechten fehlgeschlagen oder abgelehnt: $($_.Exception.Message)" -Level ERROR
+        return 5
+    }
 }
 
 function Test-WingetAvailable {
@@ -232,6 +262,69 @@ function Install-WingetApp {
     return $entry
 }
 
+function New-WorkFolders {
+    <# Legt die Arbeitsordner an, falls sie fehlen. #>
+    foreach ($folder in $WorkFolders) {
+        if (Test-Path -LiteralPath $folder) { Write-Log "Ordner vorhanden: $folder"; continue }
+        if ($DryRun) { Write-Log "Wuerde Ordner anlegen: $folder (DryRun)" -Level WARN; continue }
+        try {
+            New-Item -Path $folder -ItemType Directory -Force | Out-Null
+            Write-Log "Ordner angelegt: $folder" -Level OK
+        }
+        catch { Write-Log "Ordner '$folder' konnte nicht angelegt werden: $($_.Exception.Message)" -Level WARN }
+    }
+}
+
+function Set-QuickAccess {
+    <# Entfernt Dokumente, Bilder, Musik und Videos aus dem Schnellzugriff des Datei-Explorers und heftet $WorkFolders an. #>
+    try {
+        $shell = New-Object -ComObject Shell.Application
+        $quickAccess = $shell.Namespace('shell:::{679f85cb-0220-4080-b29b-5540cc05aab6}')
+        if (-not $quickAccess) { throw 'Schnellzugriff konnte nicht geoeffnet werden.' }
+
+        $unpin = @('MyDocuments', 'MyPictures', 'MyMusic', 'MyVideos') |
+            ForEach-Object { [Environment]::GetFolderPath($_).TrimEnd('\') } | Where-Object { $_ }
+
+        # Items() nur einmal aufzaehlen: ein zweiter Aufruf liefert unter Windows PowerShell 5.1 eine leere Liste
+        $items = @($quickAccess.Items())
+        foreach ($item in $items) {
+            $path ="$($item.Path)".TrimEnd('\')
+            if ($unpin -notcontains $path) { continue }
+            $verb = $item.Verbs() | Where-Object { $_.Name.Replace('&', '') -match 'Schnellzugriff.*(l.sen|entfernen)|Unpin from Quick access' } | Select-Object -First 1
+            if (-not $verb) { Write-Log "Schnellzugriff: '$($item.Name)' ist nicht angeheftet - uebersprungen."; continue }
+            if ($DryRun) { Write-Log "Wuerde aus Schnellzugriff entfernen: $($item.Name) (DryRun)" -Level WARN; continue }
+            $verb.DoIt()
+            Write-Log "Schnellzugriff: '$($item.Name)' entfernt." -Level OK
+        }
+
+        $pinned = @()
+        foreach ($item in $items) { $pinned += "$($item.Path)".TrimEnd('\') }
+        foreach ($folder in $WorkFolders) {
+            if ($pinned -contains $folder) { Write-Log "Schnellzugriff: $folder bereits angeheftet."; continue }
+            if ($DryRun) { Write-Log "Wuerde an Schnellzugriff anheften: $folder (DryRun)" -Level WARN; continue }
+            if (-not (Test-Path -LiteralPath $folder)) { Write-Log "Schnellzugriff: $folder existiert nicht - uebersprungen." -Level WARN; continue }
+            $shell.Namespace($folder).Self.InvokeVerb('pintohome')
+            Write-Log "Schnellzugriff: $folder angeheftet." -Level OK
+        }
+    }
+    catch { Write-Log "Schnellzugriff: $($_.Exception.Message)" -Level WARN }
+}
+
+function Update-WingetPackages {
+    <# Aktualisiert alle weiteren per winget verwaltbaren Pakete. Fehler hierbei sind nur Warnungen. #>
+    if ($DryRun) { Write-Log 'Updates: "winget upgrade --all" uebersprungen (DryRun).' -Level WARN; return }
+    try {
+        Write-Log '--- Updates (winget upgrade --all) ---'
+        $result = Invoke-Winget -Arguments @('upgrade', '--all', '--silent', '--accept-package-agreements',
+            '--accept-source-agreements', '--disable-interactivity')
+        $result.Output | Where-Object { $_.Trim() -and $_ -notmatch '^\s*[-\\|/]\s*$' } |
+            ForEach-Object { try { Add-Content -Path $LogPath -Value "    $_" -Encoding UTF8 } catch { } }
+        if ($result.ExitCode -eq 0) { Write-Log 'Updates: alle Pakete aktuell bzw. aktualisiert.' -Level OK }
+        else { Write-Log "Updates: winget meldete Exit-Code $($result.ExitCode) (einzelne Updates evtl. nicht moeglich, siehe Log)." -Level WARN }
+    }
+    catch { Write-Log "Updates: $($_.Exception.Message)" -Level WARN }
+}
+
 function Remove-DesktopShortcuts {
     <# Loescht alle Verknuepfungen (.lnk/.url) vom Desktop des aktuellen Benutzers und vom Desktop 'Alle Benutzer'. #>
     $folders = @(
@@ -255,12 +348,14 @@ function Remove-DesktopShortcuts {
 }
 
 function Set-TaskbarPins {
-    <# Setzt die Taskleiste (aktueller Benutzer) per LayoutModification.xml auf: Explorer, Edge, Windows Terminal, GitHub Desktop, Claude.
+    <# Setzt die Taskleiste (aktueller Benutzer) per LayoutModification.xml auf: Explorer, Edge, Windows Terminal, GitHub Desktop, Claude, WhatsApp, Telegram.
        Windows 11 bietet keine offizielle Pin-API; die Datei wird durch Zuruecksetzen von 'Taskband' und Explorer-Neustart angewendet. #>
     $wanted = @(
         [pscustomobject]@{ Name = 'Windows Terminal'; Pattern = '^(Windows )?Terminal$' }
         [pscustomobject]@{ Name = 'GitHub Desktop';   Pattern = '^GitHub Desktop$' }
         [pscustomobject]@{ Name = 'Claude';           Pattern = '^Claude$' }
+        [pscustomobject]@{ Name = 'WhatsApp';         Pattern = '^WhatsApp$' }
+        [pscustomobject]@{ Name = 'Telegram';         Pattern = '^Telegram$' }
     )
     try {
         $startApps = @(Get-StartApps)
@@ -312,7 +407,7 @@ $($pins -join "`r`n")
         Stop-Process -Name explorer -Force -ErrorAction SilentlyContinue
         Start-Sleep -Seconds 2
         if (-not (Get-Process -Name explorer -ErrorAction SilentlyContinue)) { Start-Process explorer.exe }
-        Write-Log 'Taskleiste: Terminal, GitHub Desktop und Claude angeheftet.' -Level OK
+        Write-Log 'Taskleiste: Pins gesetzt (Explorer, Edge, Terminal, GitHub Desktop, Claude, WhatsApp, Telegram).' -Level OK
     }
     catch { Write-Log "Taskleiste: Anheften fehlgeschlagen: $($_.Exception.Message)" -Level WARN }
 }
@@ -337,7 +432,13 @@ function Main {
         return 2
     }
     if (-not (Test-IsAdministrator)) {
-        Write-Log 'Hinweis: Skript laeuft nicht als Administrator - einzelne Installer koennen UAC-Abfragen zeigen oder fehlschlagen.' -Level WARN
+        if ($DryRun) {
+            Write-Log 'Hinweis: Skript laeuft nicht als Administrator (fuer DryRun nicht erforderlich).' -Level WARN
+        }
+        else {
+            Write-Log 'Administratorrechte erforderlich - Skript wird mit erhoehten Rechten neu gestartet (UAC).'
+            return (Restart-AsAdministrator)
+        }
     }
     if (-not (Test-WingetAvailable)) {
         Write-Log 'Abbruch: winget ist nicht verfuegbar. Bitte den "App Installer" aus dem Microsoft Store installieren/aktualisieren.' -Level ERROR
@@ -345,6 +446,9 @@ function Main {
     }
 
     $results = foreach ($app in $Applications) { Install-WingetApp -App $app }
+    Update-WingetPackages
+    New-WorkFolders
+    Set-QuickAccess
     Remove-DesktopShortcuts
     Set-TaskbarPins
     Write-Summary -Results @($results)
@@ -358,4 +462,6 @@ catch {
     Write-Log "Unerwarteter Fehler: $($_.Exception.Message)" -Level ERROR
     $code = 4
 }
+# Im automatisch erhoehten Fenster offen halten, damit die Ausgabe lesbar bleibt
+if ($env:WIN11_REINSTALL_PAUSE -eq '1') { Write-Host ''; Read-Host 'Zum Schliessen Enter druecken' | Out-Null }
 exit $code
