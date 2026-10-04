@@ -58,6 +58,7 @@ Das Log wird nach `C:\Temp\win11_reinstall_<Zeitstempel>.log` geschrieben (das V
 * WinRAR
 * Image Resizer for Windows
 * EPOS Connect
+* Jabra Direct
 * Stream Deck
 * VLC
 * FileBot

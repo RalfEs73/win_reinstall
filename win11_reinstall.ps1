@@ -71,6 +71,7 @@ $Applications = @(
     [pscustomobject]@{ Name = 'WinRAR';						SearchTerm = 'WinRAR';				IdPattern = '^RARLab\.WinRAR$' }
     [pscustomobject]@{ Name = 'Image Resizer for Windows';	SearchTerm = 'Resizer for Windows';	IdPattern = '^BriceLambson\.ImageResizerforWindows$' }
     [pscustomobject]@{ Name = 'EPOS Connect';				SearchTerm = 'EPOS Connect';		IdPattern = '^EPOS\.EPOSConnect$' }
+    [pscustomobject]@{ Name = 'Jabra Direct';				SearchTerm = 'Jabra Direct';		IdPattern = '^Jabra\.Direct$' }
     [pscustomobject]@{ Name = 'Stream Deck';				SearchTerm = 'Stream Deck';			IdPattern = '^Elgato\.StreamDeck$' }
     [pscustomobject]@{ Name = 'VLC';						SearchTerm = 'VLC';					IdPattern = '^VideoLAN\.VLC$' }
     [pscustomobject]@{ Name = 'FileBot';					SearchTerm = 'FileBot';				IdPattern = '^PointPlanck\.FileBot$' }
