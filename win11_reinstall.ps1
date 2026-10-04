@@ -66,6 +66,7 @@ $Applications = @(
     [pscustomobject]@{ Name = 'GitHub Desktop';				SearchTerm = 'GitHub Desktop';		IdPattern = '^GitHub\.GitHubDesktop$' }
     [pscustomobject]@{ Name = 'Visual Studio Code';			SearchTerm = 'Visual Studio Code';	IdPattern = '^Microsoft\.VisualStudioCode$' }
     [pscustomobject]@{ Name = 'Claude Desktop';				SearchTerm = 'Claude';				IdPattern = '^Anthropic\.Claude$' }
+    [pscustomobject]@{ Name = 'Microsoft Copilot';			SearchTerm = 'Microsoft Copilot';	IdPattern = '^XP9CXNGPPJ97XX$'; Source = 'msstore'; FixedId = 'XP9CXNGPPJ97XX' }
     [pscustomobject]@{ Name = 'LocalSend';					SearchTerm = 'LocalSend';			IdPattern = '^LocalSend\.LocalSend$' }
     [pscustomobject]@{ Name = 'WinRAR';						SearchTerm = 'WinRAR';				IdPattern = '^RARLab\.WinRAR$' }
     [pscustomobject]@{ Name = 'Image Resizer for Windows';	SearchTerm = 'Resizer for Windows';	IdPattern = '^BriceLambson\.ImageResizerforWindows$' }
@@ -402,12 +403,13 @@ public class Win32Wallpaper {
 }
 
 function Set-TaskbarPins {
-    <# Setzt die Taskleiste (aktueller Benutzer) per LayoutModification.xml auf: Explorer, Edge, Windows Terminal, GitHub Desktop, Claude, WhatsApp, Telegram.
+    <# Setzt die Taskleiste (aktueller Benutzer) per LayoutModification.xml auf: Explorer, Edge, Terminal, Claude, Copilot, GitHub Desktop, WhatsApp, Telegram.
        Windows 11 bietet keine offizielle Pin-API; die Datei wird durch Zurücksetzen von 'Taskband' und Explorer-Neustart angewendet. #>
     $wanted = @(
         [pscustomobject]@{ Name = 'Windows Terminal'; Pattern = '^(Windows )?Terminal$' }
-        [pscustomobject]@{ Name = 'GitHub Desktop';   Pattern = '^GitHub Desktop$' }
         [pscustomobject]@{ Name = 'Claude';           Pattern = '^Claude$' }
+        [pscustomobject]@{ Name = 'Copilot';          Pattern = '^(Microsoft )?Copilot$' }
+        [pscustomobject]@{ Name = 'GitHub Desktop';   Pattern = '^GitHub Desktop$' }
         [pscustomobject]@{ Name = 'WhatsApp';         Pattern = '^WhatsApp$' }
         [pscustomobject]@{ Name = 'Telegram';         Pattern = '^Telegram$' }
     )
@@ -459,9 +461,16 @@ $($pins -join "`r`n")
         $taskband = 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Taskband'
         if (Test-Path $taskband) { Remove-Item -Path $taskband -Recurse -Force }
         Stop-Process -Name explorer -Force -ErrorAction SilentlyContinue
-        Start-Sleep -Seconds 2
-        if (-not (Get-Process -Name explorer -ErrorAction SilentlyContinue)) { Start-Process explorer.exe }
-        Write-Log 'Taskleiste: Pins gesetzt (Explorer, Edge, Terminal, GitHub Desktop, Claude, WhatsApp, Telegram).' -Level OK
+        # Windows startet die Shell selbst im normalen Benutzerkontext neu. Darauf warten, statt explorer.exe aus
+        # diesem erhöhten Prozess zu starten: sonst läuft die Shell als Administrator und alle daraus gestarteten
+        # Apps (z. B. Terminal aus der Taskleiste) ebenfalls.
+        $deadline = (Get-Date).AddSeconds(15)
+        while (-not (Get-Process -Name explorer -ErrorAction SilentlyContinue) -and (Get-Date) -lt $deadline) { Start-Sleep -Seconds 1 }
+        if (-not (Get-Process -Name explorer -ErrorAction SilentlyContinue)) {
+            # Notfall: Explorer mit eingeschränktem Token (nicht erhöht) starten
+            Start-Process -FilePath "$env:SystemRoot\System32\runas.exe" -ArgumentList '/trustlevel:0x20000', "$env:SystemRoot\explorer.exe" -WindowStyle Hidden
+        }
+        Write-Log 'Taskleiste: Pins gesetzt (Explorer, Edge, Terminal, Claude, Copilot, GitHub Desktop, WhatsApp, Telegram).' -Level OK
     }
     catch { Write-Log "Taskleiste: Anheften fehlgeschlagen: $($_.Exception.Message)" -Level WARN }
 }

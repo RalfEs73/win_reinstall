@@ -9,7 +9,7 @@ Dieses Script installiert die von mir gewünschten Anwendungen auf einem Windows
 
 
 ## Aufruf
-Mit PowerShell (und Adminrechten) den folgenden Befehl starten:
+Mit PowerShell den folgenden Befehl starten (Adminrechte werden bei Bedarf automatisch per UAC angefordert):
 ### Windows 11
 ```sh
 iex ((New-Object System.Net.WebClient).DownloadString('https://raw.githubusercontent.com/RalfEs73/win_reinstall/main/win11_reinstall.ps1'))
@@ -31,8 +31,8 @@ Mit dem Parameter `-DryRun` werden nur die winget-IDs aufgelöst und der Install
 6. **Ordner und Schnellzugriff:** Die Ordner `C:\Temp` und `C:\GitHub` werden angelegt, falls sie fehlen. Im Datei-Explorer werden Dokumente, Bilder, Musik und Videos aus dem Schnellzugriff entfernt und die beiden Ordner angeheftet. Zusätzlich werden die Vorschläge zu zuletzt verwendeten Dateien, häufig verwendeten Ordnern und empfohlenen Cloud-Dateien im Datei-Explorer ausgeschaltet.
 7. **Aufräumen:** Plex und Discord werden nach der Installation wieder beendet, falls der Installer sie automatisch startet. Anschließend werden alle Verknüpfungen (`.lnk`, `.url`) vom Desktop des aktuellen Benutzers und von „Alle Benutzer“ gelöscht.
 8. **Hintergrundbild:** Das Bild `Wallpaper/wallpaper.jpg` wird aus diesem Repository nach `Bilder\wallpaper.jpg` heruntergeladen und als Desktop-Hintergrund des aktuellen Benutzers gesetzt (Anpassung „Ausfüllen“).
-9. **Taskleiste:** Die Taskleiste des aktuellen Benutzers enthält danach nur Explorer, Edge, Windows Terminal, GitHub Desktop, Claude, WhatsApp und Telegram. Alle anderen Pins, z. B. der Microsoft Store, werden entfernt. Dafür wird eine `LayoutModification.xml` geschrieben, der Registry-Schlüssel `Taskband` zurückgesetzt und der Explorer neu gestartet (Explorer-Fenster werden dabei kurz geschlossen).
-10. **Zusammenfassung:** Am Ende wird der Status jeder Anwendung ausgegeben.
+9. **Taskleiste:** Die Taskleiste des aktuellen Benutzers enthält danach nur Explorer, Edge, Windows Terminal, Claude, Copilot, GitHub Desktop, WhatsApp und Telegram (in dieser Reihenfolge). Alle anderen Pins, z. B. der Microsoft Store, werden entfernt. Dafür wird eine `LayoutModification.xml` geschrieben, der Registry-Schlüssel `Taskband` zurückgesetzt und der Explorer beendet. Windows startet ihn anschließend im normalen Benutzerkontext neu (Explorer-Fenster werden dabei kurz geschlossen).
+10. **Zusammenfassung:** Am Ende wird der Status jeder Anwendung ausgegeben und die Logdatei in Notepad geöffnet.
 
 Das Log wird nach `C:\Temp\win11_reinstall_<Zeitstempel>.log` geschrieben (das Verzeichnis wird bei Bedarf angelegt).
 
@@ -53,6 +53,7 @@ Das Log wird nach `C:\Temp\win11_reinstall_<Zeitstempel>.log` geschrieben (das V
 * GitHub Desktop
 * Visual Studio Code
 * Claude Desktop
+* Microsoft Copilot (Microsoft Store)
 * LocalSend
 * WinRAR
 * Image Resizer for Windows
