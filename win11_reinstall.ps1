@@ -65,7 +65,7 @@ $Applications = @(
     [pscustomobject]@{ Name = 'GitHub Desktop';				SearchTerm = 'GitHub Desktop';		IdPattern = '^GitHub\.GitHubDesktop$' }
     [pscustomobject]@{ Name = 'Visual Studio Code';			SearchTerm = 'Visual Studio Code';	IdPattern = '^Microsoft\.VisualStudioCode$' }
     [pscustomobject]@{ Name = 'Claude Desktop';				SearchTerm = 'Claude';				IdPattern = '^Anthropic\.Claude$' }
-    [pscustomobject]@{ Name = 'Microsoft Copilot';			SearchTerm = 'Microsoft Copilot';	IdPattern = '^XP9CXNGPPJ97XX$'; Source = 'msstore'; FixedId = 'XP9CXNGPPJ97XX'; StopProcess = @('mscopilot_proxy', 'mscopilot'); RemoveAutostart = 'MicrosoftCopilotAutoLaunch*' }
+    [pscustomobject]@{ Name = 'Microsoft Copilot';			SearchTerm = 'Microsoft Copilot';	IdPattern = '^XP9CXNGPPJ97XX$'; Source = 'msstore'; FixedId = 'XP9CXNGPPJ97XX'; RemoveAutostart = 'MicrosoftCopilotAutoLaunch*' }
     [pscustomobject]@{ Name = 'Plex';						SearchTerm = 'Plex';				IdPattern = '^Plex\.Plex$'; StopProcess = 'Plex' }
     [pscustomobject]@{ Name = 'LocalSend';					SearchTerm = 'LocalSend';			IdPattern = '^LocalSend\.LocalSend$' }
     [pscustomobject]@{ Name = 'WinRAR';						SearchTerm = 'WinRAR';				IdPattern = '^RARLab\.WinRAR$' }
