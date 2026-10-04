@@ -144,7 +144,7 @@ function Test-WingetAvailable {
     if (-not $cmd) { return $false }
     try {
         $version = (& winget --version 2>&1 | Out-String).Trim()
-        Write-Log "winget gefunden: $version ($($cmd.Source))"
+        Write-Log "winget gefunden: $version"
         return ($LASTEXITCODE -eq 0)
     }
     catch { return $false }
