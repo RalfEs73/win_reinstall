@@ -66,7 +66,7 @@ $Applications = @(
     [pscustomobject]@{ Name = 'GitHub Desktop';				SearchTerm = 'GitHub Desktop';		IdPattern = '^GitHub\.GitHubDesktop$' }
     [pscustomobject]@{ Name = 'Visual Studio Code';			SearchTerm = 'Visual Studio Code';	IdPattern = '^Microsoft\.VisualStudioCode$' }
     [pscustomobject]@{ Name = 'Claude Desktop';				SearchTerm = 'Claude';				IdPattern = '^Anthropic\.Claude$' }
-    [pscustomobject]@{ Name = 'Microsoft Copilot';			SearchTerm = 'Microsoft Copilot';	IdPattern = '^XP9CXNGPPJ97XX$'; Source = 'msstore'; FixedId = 'XP9CXNGPPJ97XX'; StopProcess = 'mscopilot' }
+    [pscustomobject]@{ Name = 'Microsoft Copilot';			SearchTerm = 'Microsoft Copilot';	IdPattern = '^XP9CXNGPPJ97XX$'; Source = 'msstore'; FixedId = 'XP9CXNGPPJ97XX'; StopProcess = @('mscopilot_proxy', 'mscopilot') }
     [pscustomobject]@{ Name = 'LocalSend';					SearchTerm = 'LocalSend';			IdPattern = '^LocalSend\.LocalSend$' }
     [pscustomobject]@{ Name = 'WinRAR';						SearchTerm = 'WinRAR';				IdPattern = '^RARLab\.WinRAR$' }
     [pscustomobject]@{ Name = 'Image Resizer for Windows';	SearchTerm = 'Resizer for Windows';	IdPattern = '^BriceLambson\.ImageResizerforWindows$' }
@@ -199,20 +199,25 @@ function Test-AppInstalled {
 }
 
 function Stop-AutoLaunchedProcess {
-    <# Beendet eine vom Installer automatisch gestartete App (wartet kurz, da der Start verzögert erfolgen kann). #>
-    param([Parameter(Mandatory)][string]$ProcessName, [int]$TimeoutSeconds = 20)
+    <# Beendet eine vom Installer automatisch gestartete App. Der Start kann verzögert erfolgen und die App kann sich
+       über einen Proxy-Prozess neu starten. Daher wird bis zu $TimeoutSeconds lang beobachtet und alles Gefundene
+       beendet, bis $QuietSeconds Sekunden lang nichts mehr auftaucht. #>
+    param([Parameter(Mandatory)][string[]]$ProcessName, [int]$TimeoutSeconds = 40, [int]$QuietSeconds = 8)
     $deadline = (Get-Date).AddSeconds($TimeoutSeconds)
-    $stopped = $false
-    do {
+    $lastKill = $null
+    $killedNames = @()
+    while ((Get-Date) -lt $deadline) {
         $procs = @(Get-Process -Name $ProcessName -ErrorAction SilentlyContinue)
         if ($procs.Count -gt 0) {
+            $killedNames += $procs | ForEach-Object { $_.Name }
             $procs | Stop-Process -Force -ErrorAction SilentlyContinue
-            $stopped = $true
-            Start-Sleep -Seconds 2   # Nachzügler abwarten
+            $lastKill = Get-Date
         }
-        else { Start-Sleep -Seconds 1 }
-    } while ((Get-Date) -lt $deadline -and -not $stopped)
-    if ($stopped) { Write-Log "Automatisch gestarteter Prozess '$ProcessName' wurde beendet." }
+        elseif ($lastKill -and ((Get-Date) - $lastKill).TotalSeconds -ge $QuietSeconds) { break }
+        Start-Sleep -Seconds 1
+    }
+    if ($lastKill) { Write-Log "Automatisch gestartete Prozesse wurden beendet: $((@($killedNames | Select-Object -Unique)) -join ', ')." }
+    else { Write-Log "Kein automatisch gestarteter Prozess ($($ProcessName -join ', ')) gefunden." }
 }
 
 function Install-WingetApp {
