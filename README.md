@@ -47,13 +47,12 @@ Das Log wird nach `C:\Temp\win11_reinstall_<Zeitstempel>.log` geschrieben (das V
 | 5 | Administratorrechte nicht erteilt (UAC abgelehnt) |
 
 ## Die folgenden Anwendungen werden installiert:
-* Plex
 * PowerShell
-* Windows Terminal
 * GitHub Desktop
 * Visual Studio Code
 * Claude Desktop
 * Microsoft Copilot (Microsoft Store)
+* Plex
 * LocalSend
 * WinRAR
 * Image Resizer for Windows
