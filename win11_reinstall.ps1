@@ -403,6 +403,31 @@ public class Win32Wallpaper {
     catch { Write-Log "Hintergrundbild: $($_.Exception.Message)" -Level WARN }
 }
 
+function Test-ExplorerElevated {
+    <# Prüft, ob ein laufender explorer.exe mit erhöhten (Administrator-)Rechten läuft. #>
+    if (-not ('Win32TokenInfo' -as [type])) {
+        Add-Type -TypeDefinition @'
+using System;
+using System.Runtime.InteropServices;
+public static class Win32TokenInfo {
+    [DllImport("advapi32.dll", SetLastError = true)] static extern bool OpenProcessToken(IntPtr h, uint access, out IntPtr token);
+    [DllImport("advapi32.dll", SetLastError = true)] static extern bool GetTokenInformation(IntPtr token, int cls, out int info, int len, out int ret);
+    [DllImport("kernel32.dll")] static extern bool CloseHandle(IntPtr h);
+    public static bool IsElevated(IntPtr process) {
+        IntPtr token;
+        if (!OpenProcessToken(process, 8, out token)) return false;   // TOKEN_QUERY
+        try { int v; int r; return GetTokenInformation(token, 20, out v, 4, out r) && v != 0; }   // TokenElevation
+        finally { CloseHandle(token); }
+    }
+}
+'@
+    }
+    foreach ($proc in @(Get-Process -Name explorer -ErrorAction SilentlyContinue)) {
+        try { if ([Win32TokenInfo]::IsElevated($proc.Handle)) { return $true } } catch { }
+    }
+    return $false
+}
+
 function Set-TaskbarPins {
     <# Setzt die Taskleiste (aktueller Benutzer) per LayoutModification.xml auf: Explorer, Edge, Terminal, Claude, Copilot, GitHub Desktop, WhatsApp, Telegram.
        Windows 11 bietet keine offizielle Pin-API; die Datei wird durch Zurücksetzen von 'Taskband' und Explorer-Neustart angewendet. #>
@@ -465,12 +490,25 @@ $($pins -join "`r`n")
         # Windows startet die Shell selbst im normalen Benutzerkontext neu. Darauf warten, statt explorer.exe aus
         # diesem erhöhten Prozess zu starten: sonst läuft die Shell als Administrator und alle daraus gestarteten
         # Apps (z. B. Terminal aus der Taskleiste) ebenfalls.
-        $deadline = (Get-Date).AddSeconds(15)
-        while (-not (Get-Process -Name explorer -ErrorAction SilentlyContinue) -and (Get-Date) -lt $deadline) { Start-Sleep -Seconds 1 }
-        if (-not (Get-Process -Name explorer -ErrorAction SilentlyContinue)) {
-            # Notfall: Explorer mit eingeschränktem Token (nicht erhöht) starten
-            Start-Process -FilePath "$env:SystemRoot\System32\runas.exe" -ArgumentList '/trustlevel:0x20000', "$env:SystemRoot\explorer.exe" -WindowStyle Hidden
+        $waitForExplorer = {
+            $deadline = (Get-Date).AddSeconds(15)
+            while (-not (Get-Process -Name explorer -ErrorAction SilentlyContinue) -and (Get-Date) -lt $deadline) { Start-Sleep -Seconds 1 }
+            if (-not (Get-Process -Name explorer -ErrorAction SilentlyContinue)) {
+                # Notfall: Explorer mit eingeschränktem Token (nicht erhöht) starten
+                Start-Process -FilePath "$env:SystemRoot\System32\runas.exe" -ArgumentList '/trustlevel:0x20000', "$env:SystemRoot\explorer.exe" -WindowStyle Hidden
+                Start-Sleep -Seconds 3
+            }
         }
+        & $waitForExplorer
+
+        # Kontrolle: Die Shell darf nicht erhöht laufen, sonst startet Terminal & Co. aus der Taskleiste als Administrator
+        for ($try = 1; $try -le 2 -and (Test-ExplorerElevated); $try++) {
+            Write-Log 'Taskleiste: Explorer läuft erhöht - wird im normalen Benutzerkontext neu gestartet.' -Level WARN
+            Stop-Process -Name explorer -Force -ErrorAction SilentlyContinue
+            & $waitForExplorer
+        }
+        if (Test-ExplorerElevated) { Write-Log 'Taskleiste: Explorer läuft weiterhin erhöht - bitte einmal ab- und wieder anmelden.' -Level WARN }
+        else { Write-Log 'Taskleiste: Explorer läuft im normalen Benutzerkontext (nicht als Administrator).' }
         Write-Log 'Taskleiste: Pins gesetzt (Explorer, Edge, Terminal, Claude, Copilot, GitHub Desktop, WhatsApp, Telegram).' -Level OK
     }
     catch { Write-Log "Taskleiste: Anheften fehlgeschlagen: $($_.Exception.Message)" -Level WARN }
