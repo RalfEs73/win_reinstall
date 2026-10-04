@@ -58,13 +58,14 @@ $WorkFolders = @('C:\Temp', 'C:\GitHub')
 # IdPattern   : Regex, den die gefundene ID erfüllen muss (Schutz vor falschen Treffern)
 # Source      : (optional) winget-Quelle, Standard 'winget'; 'msstore' für Microsoft-Store-Apps
 # FixedId     : (optional) feste ID (z. B. Store-ID); wird nur per 'winget search --id --exact' verifiziert
+# RemoveAutostart : (optional) Namensmuster (Wildcard) von Autostart-Einträgen unter ...\CurrentVersion\Run, die entfernt werden
 # StopProcess : (optional) Prozessname, der nach der Installation beendet wird, falls der Installer die App startet
 $Applications = @(
     [pscustomobject]@{ Name = 'PowerShell';					SearchTerm = 'PowerShell';			IdPattern = '^Microsoft\.PowerShell$' }
     [pscustomobject]@{ Name = 'GitHub Desktop';				SearchTerm = 'GitHub Desktop';		IdPattern = '^GitHub\.GitHubDesktop$' }
     [pscustomobject]@{ Name = 'Visual Studio Code';			SearchTerm = 'Visual Studio Code';	IdPattern = '^Microsoft\.VisualStudioCode$' }
     [pscustomobject]@{ Name = 'Claude Desktop';				SearchTerm = 'Claude';				IdPattern = '^Anthropic\.Claude$' }
-    [pscustomobject]@{ Name = 'Microsoft Copilot';			SearchTerm = 'Microsoft Copilot';	IdPattern = '^XP9CXNGPPJ97XX$'; Source = 'msstore'; FixedId = 'XP9CXNGPPJ97XX'; StopProcess = @('mscopilot_proxy', 'mscopilot') }
+    [pscustomobject]@{ Name = 'Microsoft Copilot';			SearchTerm = 'Microsoft Copilot';	IdPattern = '^XP9CXNGPPJ97XX$'; Source = 'msstore'; FixedId = 'XP9CXNGPPJ97XX'; StopProcess = @('mscopilot_proxy', 'mscopilot'); RemoveAutostart = 'MicrosoftCopilotAutoLaunch*' }
     [pscustomobject]@{ Name = 'Plex';						SearchTerm = 'Plex';				IdPattern = '^Plex\.Plex$'; StopProcess = 'Plex' }
     [pscustomobject]@{ Name = 'LocalSend';					SearchTerm = 'LocalSend';			IdPattern = '^LocalSend\.LocalSend$' }
     [pscustomobject]@{ Name = 'WinRAR';						SearchTerm = 'WinRAR';				IdPattern = '^RARLab\.WinRAR$' }
@@ -217,6 +218,31 @@ function Stop-AutoLaunchedProcess {
     }
     if ($lastKill) { Write-Log "Automatisch gestartete Prozesse wurden beendet: $((@($killedNames | Select-Object -Unique)) -join ', ')." }
     else { Write-Log "Kein automatisch gestarteter Prozess ($($ProcessName -join ', ')) gefunden." }
+}
+
+function Remove-AppAutostart {
+    <# Entfernt Autostart-Einträge (HKCU/HKLM ...\Run), deren Name zu 'RemoveAutostart' einer App passt. Manche Apps
+       (z. B. Copilot) legen sich beim ersten Start einen Eintrag an und öffnen sich dann bei jeder Anmeldung. #>
+    $runKeys = @(
+        'HKCU:\Software\Microsoft\Windows\CurrentVersion\Run'
+        'HKLM:\Software\Microsoft\Windows\CurrentVersion\Run'
+        'HKLM:\Software\WOW6432Node\Microsoft\Windows\CurrentVersion\Run'
+    )
+    foreach ($app in $Applications) {
+        if (-not $app.PSObject.Properties['RemoveAutostart']) { continue }
+        foreach ($key in $runKeys) {
+            $item = Get-Item -Path $key -ErrorAction SilentlyContinue
+            if (-not $item) { continue }
+            foreach ($name in @($item.GetValueNames() | Where-Object { $_ -like $app.RemoveAutostart })) {
+                if ($DryRun) { Write-Log "Autostart: würde '$name' ($($app.Name)) entfernen (DryRun)." -Level WARN; continue }
+                try {
+                    Remove-ItemProperty -Path $key -Name $name -ErrorAction Stop
+                    Write-Log "Autostart: '$name' ($($app.Name)) entfernt." -Level OK
+                }
+                catch { Write-Log "Autostart: '$name' konnte nicht entfernt werden: $($_.Exception.Message)" -Level WARN }
+            }
+        }
+    }
 }
 
 function Install-WingetApp {
@@ -554,6 +580,7 @@ function Main {
 
     $results = foreach ($app in $Applications) { Install-WingetApp -App $app }
     Update-WingetPackages
+    Remove-AppAutostart
     New-WorkFolders
     Set-QuickAccess
     Set-ExplorerRecentSettings
