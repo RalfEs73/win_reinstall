@@ -1,21 +1,23 @@
 ﻿<#
 .SYNOPSIS
-    Installiert Anwendungen auf einem frischen Windows-Client ausschließlich über winget.
+    Richtet einen Business-PC (Windows 10/11 Client, lokaler Administrator) nach der Installation ein.
 
 .DESCRIPTION
     - Bricht auf Windows Server sofort ab (Exit-Code 2).
     - Prüft, ob winget verfügbar ist (Exit-Code 3).
-    - Ermittelt die winget-IDs automatisch per 'winget search'.
+    - Installiert PowerShell, GitHub Desktop, Visual Studio Code und Microsoft Copilot (Store) über winget.
     - Überspringt bereits installierte Anwendungen (idempotent).
+    - Legt C:\Temp und C:\GitHub an und heftet sie an den Schnellzugriff (Dokumente/Bilder/Musik/Videos werden gelöst).
+    - Schaltet die Explorer-Vorschläge (zuletzt verwendet, häufig, empfohlen) aus.
+    - Setzt das Hintergrundbild und die Taskleiste (Terminal, Claude, Copilot, VS Code, GitHub, Edge, OneNote, Outlook, Teams).
     - Startet sich ohne Administratorrechte selbst mit UAC neu (außer bei -DryRun).
-    - Installiert jede Anwendung einzeln, fängt Fehler ab und gibt am Ende eine Zusammenfassung aus.
-    - Aktualisiert danach alle weiteren winget-Pakete (winget upgrade --all).
+    - Schreibt ein Log nach C:\Temp und öffnet es am Ende in Notepad.
 
 .PARAMETER DryRun
-    Löst IDs auf und prüft den Installationsstatus, installiert aber nichts.
+    Löst IDs auf und prüft den Installationsstatus, ändert aber nichts.
 
 .PARAMETER LogPath
-    Pfad der Logdatei (Standard: C:\Temp\win11_reinstall_<Zeitstempel>.log; das Verzeichnis wird bei Bedarf angelegt).
+    Pfad der Logdatei (Standard: C:\Temp\win11_reinstall_business_<Zeitstempel>.log; das Verzeichnis wird bei Bedarf angelegt).
 
 .NOTES
     Exit-Codes:
@@ -29,7 +31,7 @@
 [CmdletBinding()]
 param(
     [switch]$DryRun,
-    [string]$LogPath = (Join-Path "C:\Temp" ("win11_reinstall_{0:yyyyMMdd_HHmmss}.log" -f (Get-Date)))
+    [string]$LogPath = (Join-Path "C:\Temp" ("win11_reinstall_business_{0:yyyyMMdd_HHmmss}.log" -f (Get-Date)))
 )
 
 Set-StrictMode -Version Latest
@@ -44,7 +46,7 @@ if ($logDir -and -not (Test-Path -LiteralPath $logDir)) {
 }
 
 # Quelle für den erhöhten Neustart, wenn das Skript per iex (ohne Datei) gestartet wurde
-$ScriptUrl = 'https://raw.githubusercontent.com/RalfEs73/win_reinstall/main/win11_reinstall.ps1'
+$ScriptUrl = 'https://raw.githubusercontent.com/RalfEs73/win_reinstall/main/win11_reinstall_business.ps1'
 $script:Relaunched = $false
 
 # Hintergrundbild (liegt im Repo unter Wallpaper/)
@@ -64,23 +66,7 @@ $Applications = @(
     [pscustomobject]@{ Name = 'PowerShell';					SearchTerm = 'PowerShell';			IdPattern = '^Microsoft\.PowerShell$' }
     [pscustomobject]@{ Name = 'GitHub Desktop';				SearchTerm = 'GitHub Desktop';		IdPattern = '^GitHub\.GitHubDesktop$' }
     [pscustomobject]@{ Name = 'Visual Studio Code';			SearchTerm = 'Visual Studio Code';	IdPattern = '^Microsoft\.VisualStudioCode$' }
-    [pscustomobject]@{ Name = 'Claude Desktop';				SearchTerm = 'Claude';				IdPattern = '^Anthropic\.Claude$' }
-    [pscustomobject]@{ Name = 'Microsoft Copilot';			SearchTerm = 'Microsoft Copilot';	IdPattern = '^XP9CXNGPPJ97XX$'; Source = 'msstore'; FixedId = 'XP9CXNGPPJ97XX'; RemoveAutostart = 'MicrosoftCopilotAutoLaunch*' }
-    [pscustomobject]@{ Name = 'Plex';						SearchTerm = 'Plex';				IdPattern = '^Plex\.Plex$'; StopProcess = 'Plex' }
-    [pscustomobject]@{ Name = 'LocalSend';					SearchTerm = 'LocalSend';			IdPattern = '^LocalSend\.LocalSend$' }
-    [pscustomobject]@{ Name = 'WinRAR';						SearchTerm = 'WinRAR';				IdPattern = '^RARLab\.WinRAR$' }
-    [pscustomobject]@{ Name = 'Image Resizer for Windows';	SearchTerm = 'Resizer for Windows';	IdPattern = '^BriceLambson\.ImageResizerforWindows$' }
-    [pscustomobject]@{ Name = 'EPOS Connect';				SearchTerm = 'EPOS Connect';		IdPattern = '^EPOS\.EPOSConnect$' }
-    [pscustomobject]@{ Name = 'Jabra Direct';				SearchTerm = 'Jabra Direct';		IdPattern = '^Jabra\.Direct$' }
-    [pscustomobject]@{ Name = 'Stream Deck';				SearchTerm = 'Stream Deck';			IdPattern = '^Elgato\.StreamDeck$' }
-    [pscustomobject]@{ Name = 'VLC';						SearchTerm = 'VLC';					IdPattern = '^VideoLAN\.VLC$' }
-    [pscustomobject]@{ Name = 'FileBot';					SearchTerm = 'FileBot';				IdPattern = '^PointPlanck\.FileBot$' }
-    [pscustomobject]@{ Name = 'File Converter';				SearchTerm = 'File Converter';		IdPattern = '^AdrienAllard\.FileConverter$' }
-    [pscustomobject]@{ Name = 'WhatsApp';					SearchTerm = 'WhatsApp';			IdPattern = '^9NKSQGP7F2NH$'; Source = 'msstore'; FixedId = '9NKSQGP7F2NH' }
-    [pscustomobject]@{ Name = 'Telegram';					SearchTerm = 'Telegram';			IdPattern = '^Telegram\.TelegramDesktop$' }
-    [pscustomobject]@{ Name = 'Discord';					SearchTerm = 'Discord';				IdPattern = '^Discord\.Discord$'; StopProcess = 'Discord' }
-    [pscustomobject]@{ Name = 'HandBrake';					SearchTerm = 'HandBrake';			IdPattern = '^HandBrake\.HandBrake$' }
-    [pscustomobject]@{ Name = 'Steam';						SearchTerm = 'Steam';				IdPattern = '^Valve\.Steam$' }
+    [pscustomobject]@{ Name = 'Microsoft Copilot';			SearchTerm = 'Microsoft Copilot';	IdPattern = '^XP9CXNGPPJ97XX$'; Source = 'msstore'; FixedId = 'XP9CXNGPPJ97XX'; StopProcess = @('mscopilot_proxy', 'mscopilot'); RemoveAutostart = 'MicrosoftCopilotAutoLaunch*' }
 )
 
 # Optionale Eigenschaften mit Standardwerten ergänzen (StrictMode-sicher)
@@ -365,43 +351,6 @@ function Set-ExplorerRecentSettings {
     }
 }
 
-function Update-WingetPackages {
-    <# Aktualisiert alle weiteren per winget verwaltbaren Pakete. Fehler hierbei sind nur Warnungen. #>
-    if ($DryRun) { Write-Log 'Updates: "winget upgrade --all" übersprungen (DryRun).' -Level WARN; return }
-    try {
-        Write-Log '--- Updates (winget upgrade --all) ---'
-        $result = Invoke-Winget -Arguments @('upgrade', '--all', '--silent', '--accept-package-agreements',
-            '--accept-source-agreements', '--disable-interactivity')
-        $result.Output | Where-Object { $_.Trim() -and $_ -notmatch '^\s*[-\\|/]\s*$' } |
-            ForEach-Object { try { Add-Content -Path $LogPath -Value "    $_" -Encoding UTF8 } catch { } }
-        if ($result.ExitCode -eq 0) { Write-Log 'Updates: alle Pakete aktuell bzw. aktualisiert.' -Level OK }
-        else { Write-Log "Updates: winget meldete Exit-Code $($result.ExitCode) (einzelne Updates evtl. nicht möglich, siehe Log)." -Level WARN }
-    }
-    catch { Write-Log "Updates: $($_.Exception.Message)" -Level WARN }
-}
-
-function Remove-DesktopShortcuts {
-    <# Löscht alle Verknüpfungen (.lnk/.url) vom Desktop des aktuellen Benutzers und vom Desktop 'Alle Benutzer'. #>
-    $folders = @(
-        [Environment]::GetFolderPath('Desktop'),              # aktueller Benutzer (berücksichtigt OneDrive-Umleitung)
-        [Environment]::GetFolderPath('CommonDesktopDirectory') # Alle Benutzer
-    ) | Where-Object { $_ -and (Test-Path -LiteralPath $_) } | Select-Object -Unique
-
-    foreach ($folder in $folders) {
-        $items = @(Get-ChildItem -LiteralPath $folder -Force -File -ErrorAction SilentlyContinue |
-            Where-Object { $_.Extension -in '.lnk', '.url' })
-        Write-Log "Desktop-Bereinigung: $folder ($($items.Count) Verknüpfung(en))"
-        foreach ($item in $items) {
-            if ($DryRun) { Write-Log "Würde löschen: $($item.Name) (DryRun)" -Level WARN; continue }
-            try {
-                Remove-Item -LiteralPath $item.FullName -Force -ErrorAction Stop
-                Write-Log "Gelöscht: $($item.Name)" -Level OK
-            }
-            catch { Write-Log "Konnte '$($item.FullName)' nicht löschen: $($_.Exception.Message)" -Level WARN }
-        }
-    }
-}
-
 function Set-DesktopWallpaper {
     <# Lädt das Hintergrundbild aus dem GitHub-Repo herunter und setzt es als Desktop-Hintergrund des aktuellen Benutzers. #>
     $target = Join-Path ([Environment]::GetFolderPath('MyPictures')) 'wallpaper.jpg'
@@ -459,22 +408,30 @@ public static class Win32TokenInfo {
 }
 
 function Set-TaskbarPins {
-    <# Setzt die Taskleiste (aktueller Benutzer) per LayoutModification.xml auf: Explorer, Edge, Terminal, Claude, Copilot, GitHub Desktop, WhatsApp, Telegram.
-       Windows 11 bietet keine offizielle Pin-API; die Datei wird durch Zurücksetzen von 'Taskband' und Explorer-Neustart angewendet. #>
+    <# Setzt die Taskleiste (aktueller Benutzer) per LayoutModification.xml auf: Terminal, Claude, Copilot, VS Code, GitHub Desktop,
+       Edge, OneNote, Outlook, Teams (in genau dieser Reihenfolge). Windows 11 bietet keine offizielle Pin-API; die Datei wird
+       durch Zurücksetzen von 'Taskband' und Explorer-Neustart angewendet. #>
+    # Reihenfolge = Reihenfolge in der Taskleiste. 'Fixed' = feste Pin-Zeile (ohne Get-StartApps-Suche).
     $wanted = @(
-        [pscustomobject]@{ Name = 'Windows Terminal'; Pattern = '^(Windows )?Terminal$' }
-        [pscustomobject]@{ Name = 'Claude';           Pattern = '^Claude$' }
-        [pscustomobject]@{ Name = 'Copilot';          Pattern = '^(Microsoft )?Copilot$' }
-        [pscustomobject]@{ Name = 'GitHub Desktop';   Pattern = '^GitHub Desktop$' }
-        [pscustomobject]@{ Name = 'WhatsApp';         Pattern = '^WhatsApp$' }
-        [pscustomobject]@{ Name = 'Telegram';         Pattern = '^Telegram$' }
+        [pscustomobject]@{ Name = 'Windows Terminal';  Pattern = '^(Windows )?Terminal$';                  Fixed = $null }
+        [pscustomobject]@{ Name = 'Claude';            Pattern = '^Claude$';                               Fixed = $null }
+        [pscustomobject]@{ Name = 'Copilot';           Pattern = '^(Microsoft )?Copilot$';                 Fixed = $null }
+        [pscustomobject]@{ Name = 'Visual Studio Code'; Pattern = '^Visual Studio Code$';                  Fixed = $null }
+        [pscustomobject]@{ Name = 'GitHub Desktop';    Pattern = '^GitHub Desktop$';                       Fixed = $null }
+        [pscustomobject]@{ Name = 'Edge';              Pattern = $null; Fixed = '        <taskbar:DesktopApp DesktopApplicationID="MSEdge" />' }
+        [pscustomobject]@{ Name = 'OneNote';           Pattern = '^OneNote( \(.*\))?( für Windows 10)?$';  Fixed = $null }
+        [pscustomobject]@{ Name = 'Outlook';           Pattern = '^Outlook( \(.*\))?$';                    Fixed = $null }
+        [pscustomobject]@{ Name = 'Teams';             Pattern = '^(Microsoft )?Teams( \(.*\))?$';         Fixed = $null }
     )
     try {
         $startApps = @(Get-StartApps)
+        $pinned = @()
         $pins = foreach ($w in $wanted) {
+            if ($w.Fixed) { $pinned += $w.Name; $w.Fixed; continue }
             $hit = $startApps | Where-Object { $_.Name -match $w.Pattern } | Select-Object -First 1
             if ($hit) {
                 Write-Log "Taskleiste: $($w.Name) -> $($hit.AppID)"
+                $pinned += $w.Name
                 # Store-Apps haben ein '!' in der AppUserModelID, klassische Desktop-Apps nicht
                 if ($hit.AppID -match '!') { '        <taskbar:UWA AppUserModelID="{0}" />' -f $hit.AppID }
                 else { '        <taskbar:DesktopApp DesktopApplicationID="{0}" />' -f $hit.AppID }
@@ -483,15 +440,9 @@ function Set-TaskbarPins {
         }
         if (-not $pins) { Write-Log 'Taskleiste: keine Anwendung gefunden, nichts zu tun.' -Level WARN; return }
 
-        # Die Pin-Liste wird ersetzt (Replace): alle anderen Standard-Pins, z. B. der Microsoft Store, entfallen.
-        # Explorer und Edge bleiben daher ausdrücklich erhalten.
-        $pins = @(
-            '        <taskbar:DesktopApp DesktopApplicationID="Microsoft.Windows.Explorer" />'
-            '        <taskbar:DesktopApp DesktopApplicationID="MSEdge" />'
-        ) + @($pins)
-
         if ($DryRun) { Write-Log 'Taskleiste: Anheften übersprungen (DryRun).' -Level WARN; return }
 
+        # Die Pin-Liste wird ersetzt (Replace): alle anderen Standard-Pins, z. B. Explorer und Microsoft Store, entfallen.
         $xml = @"
 <?xml version="1.0" encoding="utf-8"?>
 <LayoutModificationTemplate
@@ -503,7 +454,7 @@ function Set-TaskbarPins {
   <CustomTaskbarLayoutCollection PinListPlacement="Replace">
     <defaultlayout:TaskbarLayout>
       <taskbar:TaskbarPinList>
-$($pins -join "`r`n")
+$(@($pins) -join "`r`n")
       </taskbar:TaskbarPinList>
     </defaultlayout:TaskbarLayout>
   </CustomTaskbarLayoutCollection>
@@ -539,7 +490,7 @@ $($pins -join "`r`n")
         }
         if (Test-ExplorerElevated) { Write-Log 'Taskleiste: Explorer läuft weiterhin erhöht - bitte einmal ab- und wieder anmelden.' -Level WARN }
         else { Write-Log 'Taskleiste: Explorer läuft im normalen Benutzerkontext (nicht als Administrator).' }
-        Write-Log 'Taskleiste: Pins gesetzt (Explorer, Edge, Terminal, Claude, Copilot, GitHub Desktop, WhatsApp, Telegram).' -Level OK
+        Write-Log "Taskleiste: Pins gesetzt ($($pinned -join ', '))." -Level OK
     }
     catch { Write-Log "Taskleiste: Anheften fehlgeschlagen: $($_.Exception.Message)" -Level WARN }
 }
@@ -579,12 +530,10 @@ function Main {
     }
 
     $results = foreach ($app in $Applications) { Install-WingetApp -App $app }
-    Update-WingetPackages
     Remove-AppAutostart
     New-WorkFolders
     Set-QuickAccess
     Set-ExplorerRecentSettings
-    Remove-DesktopShortcuts
     Set-DesktopWallpaper
     Set-TaskbarPins
     Write-Summary -Results @($results)

@@ -10,15 +10,21 @@ Dieses Script installiert die von mir gewünschten Anwendungen auf einem Windows
 
 ## Aufruf
 Mit PowerShell den folgenden Befehl starten (Adminrechte werden bei Bedarf automatisch per UAC angefordert):
-### Windows 11
+### Windows 11 – Privat-PC
 ```sh
-iex ((New-Object System.Net.WebClient).DownloadString('https://raw.githubusercontent.com/RalfEs73/win_reinstall/main/win11_reinstall.ps1'))
+iex ((New-Object System.Net.WebClient).DownloadString('https://raw.githubusercontent.com/RalfEs73/win_reinstall/main/win11_reinstall_privat.ps1'))
 ```
+
+### Windows 11 – Business-PC
+```sh
+iex ((New-Object System.Net.WebClient).DownloadString('https://raw.githubusercontent.com/RalfEs73/win_reinstall/main/win11_reinstall_business.ps1'))
+```
+Details siehe Abschnitt „Business-PC“ unten.
 
 ### Lokaler Aufruf
 Ist die Ausführung von Skripten gesperrt, das Skript einmalig mit umgangener Execution Policy starten (gilt nur für diesen Aufruf):
 ```sh
-powershell -ExecutionPolicy Bypass -File .\win11_reinstall.ps1
+powershell -ExecutionPolicy Bypass -File .\win11_reinstall_privat.ps1
 ```
 Mit dem Parameter `-DryRun` werden nur die winget-IDs aufgelöst und der Installationsstatus geprüft, es wird nichts installiert oder gelöscht.
 
@@ -34,7 +40,7 @@ Mit dem Parameter `-DryRun` werden nur die winget-IDs aufgelöst und der Install
 9. **Taskleiste:** Die Taskleiste des aktuellen Benutzers enthält danach nur Explorer, Edge, Windows Terminal, Claude, Copilot, GitHub Desktop, WhatsApp und Telegram (in dieser Reihenfolge). Alle anderen Pins, z. B. der Microsoft Store, werden entfernt. Dafür wird eine `LayoutModification.xml` geschrieben, der Registry-Schlüssel `Taskband` zurückgesetzt und der Explorer beendet. Windows startet ihn anschließend im normalen Benutzerkontext neu (Explorer-Fenster werden dabei kurz geschlossen).
 10. **Zusammenfassung:** Am Ende wird der Status jeder Anwendung ausgegeben und die Logdatei in Notepad geöffnet.
 
-Das Log wird nach `C:\Temp\win11_reinstall_<Zeitstempel>.log` geschrieben (das Verzeichnis wird bei Bedarf angelegt).
+Das Log wird nach `C:\Temp\win11_reinstall_privat_<Zeitstempel>.log` geschrieben (das Verzeichnis wird bei Bedarf angelegt).
 
 ### Exit-Codes
 | Code | Bedeutung |
@@ -67,6 +73,13 @@ Das Log wird nach `C:\Temp\win11_reinstall_<Zeitstempel>.log` geschrieben (das V
 * Discord
 * HandBrake
 * Steam
+
+## Business-PC
+Für einen Business-PC (lokaler Administrator) gibt es das schlankere Skript `win11_reinstall_business.ps1` mit demselben Prinzip (Selbst-Elevation, winget, Log, `-DryRun`):
+```sh
+iex ((New-Object System.Net.WebClient).DownloadString('https://raw.githubusercontent.com/RalfEs73/win_reinstall/main/win11_reinstall_business.ps1'))
+```
+Es installiert PowerShell, GitHub Desktop, Visual Studio Code und Microsoft Copilot (Microsoft Store), legt `C:\Temp` und `C:\GitHub` an, passt Schnellzugriff und Explorer-Vorschläge wie oben an, setzt das Hintergrundbild und pinnt in der Taskleiste Terminal, Claude, Copilot, Visual Studio Code, GitHub Desktop, Edge, OneNote, Outlook und Teams (in dieser Reihenfolge; nicht gefundene Apps werden übersprungen). Es führt kein `winget upgrade --all` aus und löscht keine Desktop-Verknüpfungen. Das Log liegt unter `C:\Temp\win11_reinstall_business_<Zeitstempel>.log`.
 
 <!-- MARKDOWN LINKS & IMAGES -->
 <!-- https://www.markdownguide.org/basic-syntax/#reference-style-links -->

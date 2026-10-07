@@ -4,22 +4,24 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Projekt
 
-Ein einzelnes PowerShell-Skript, [win11_reinstall.ps1](win11_reinstall.ps1), das auf einem frischen Windows-10/11-Client Anwendungen ausschliesslich ueber winget installiert. Es wird per `iex ((New-Object System.Net.WebClient).DownloadString('https://raw.githubusercontent.com/RalfEs73/win_reinstall/main/win11_reinstall.ps1'))` direkt von GitHub (`main`) aufgerufen. Dateiname und Pfad duerfen sich deshalb nicht aendern. Es gibt keinen Build, keine Tests und keinen Linter.
+Ein einzelnes PowerShell-Skript, [win11_reinstall_privat.ps1](win11_reinstall_privat.ps1), das auf einem frischen Windows-10/11-Client Anwendungen ausschliesslich ueber winget installiert. Es wird per `iex ((New-Object System.Net.WebClient).DownloadString('https://raw.githubusercontent.com/RalfEs73/win_reinstall/main/win11_reinstall_privat.ps1'))` direkt von GitHub (`main`) aufgerufen. Dateiname und Pfad duerfen sich deshalb nicht aendern. Es gibt keinen Build, keine Tests und keinen Linter.
+
+Zusaetzlich gibt es [win11_reinstall_business.ps1](win11_reinstall_business.ps1) fuer den Business-PC (lokaler Admin): gleiche Struktur und Funktionen wie oben (Kopie, nicht geteilt), aber nur PowerShell, GitHub Desktop, VS Code und Copilot; kein `winget upgrade --all`, kein Desktop-Aufraeumen; Taskleiste in fester Reihenfolge ohne Explorer (Terminal, Claude, Copilot, VS Code, GitHub Desktop, Edge, OneNote, Outlook, Teams; `$wanted` mit optionalem `Fixed`-Pin fuer Edge); Log `C:\Temp\win11_reinstall_business_<Zeitstempel>.log`. Aenderungen an gemeinsamen Funktionen muessen in beiden Skripten erfolgen. Gleiche Konventionen (BOM, CRLF, `-DryRun`).
 
 ## Befehle
 
 ```powershell
 # Syntaxpruefung
-$e=$null; [void][System.Management.Automation.Language.Parser]::ParseFile('win11_reinstall.ps1',[ref]$null,[ref]$e); $e.Count
+$e=$null; [void][System.Management.Automation.Language.Parser]::ParseFile('win11_reinstall_privat.ps1',[ref]$null,[ref]$e); $e.Count
 
 # Sicherer Testlauf: loest IDs auf und prueft den Installationsstatus, installiert/loescht/aendert nichts
-powershell -NoProfile -ExecutionPolicy Bypass -File .\win11_reinstall.ps1 -DryRun
+powershell -NoProfile -ExecutionPolicy Bypass -File .\win11_reinstall_privat.ps1 -DryRun
 
 # Echter Lauf (Administrator)
-powershell -ExecutionPolicy Bypass -File .\win11_reinstall.ps1
+powershell -ExecutionPolicy Bypass -File .\win11_reinstall_privat.ps1
 ```
 
-Ein echter Lauf loescht Desktop-Verknuepfungen und setzt die Taskleiste zurueck (siehe unten). Zum Testen immer `-DryRun` verwenden. Log: `C:\Temp\win11_reinstall_<Zeitstempel>.log`. Exit-Codes: 0 ok, 1 App fehlgeschlagen, 2 kein Windows-Client, 3 winget fehlt, 4 unerwarteter Fehler, 5 UAC abgelehnt.
+Ein echter Lauf loescht Desktop-Verknuepfungen und setzt die Taskleiste zurueck (siehe unten). Zum Testen immer `-DryRun` verwenden. Log: `C:\Temp\win11_reinstall_privat_<Zeitstempel>.log`. Exit-Codes: 0 ok, 1 App fehlgeschlagen, 2 kein Windows-Client, 3 winget fehlt, 4 unerwarteter Fehler, 5 UAC abgelehnt.
 
 ## Architektur
 
