@@ -81,6 +81,7 @@ $Applications = @(
     [pscustomobject]@{ Name = 'Discord';					SearchTerm = 'Discord';				IdPattern = '^Discord\.Discord$'; StopProcess = 'Discord' }
     [pscustomobject]@{ Name = 'HandBrake';					SearchTerm = 'HandBrake';			IdPattern = '^HandBrake\.HandBrake$' }
     [pscustomobject]@{ Name = 'Steam';						SearchTerm = 'Steam';				IdPattern = '^Valve\.Steam$' }
+    [pscustomobject]@{ Name = 'NVIDIA App';					SearchTerm = 'NVIDIA App';			IdPattern = '^XP8CLZL93F5Z4P$'; Source = 'msstore'; FixedId = 'XP8CLZL93F5Z4P' }
 )
 
 # Optionale Eigenschaften mit Standardwerten ergänzen (StrictMode-sicher)

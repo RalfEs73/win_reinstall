@@ -73,6 +73,7 @@ Das Log wird nach `C:\Temp\win11_reinstall_privat_<Zeitstempel>.log` geschrieben
 * Discord
 * HandBrake
 * Steam
+* NVIDIA App (Microsoft Store)
 
 ## Business-PC
 Für einen Business-PC (lokaler Administrator) gibt es das schlankere Skript `win11_reinstall_business.ps1` mit demselben Prinzip (Selbst-Elevation, winget, Log, `-DryRun`):
