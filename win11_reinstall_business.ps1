@@ -567,49 +567,6 @@ $(@($pins) -join "`r`n")
     catch { Write-Log "Taskleiste: Anheften fehlgeschlagen: $($_.Exception.Message)" -Level WARN }
 }
 
-function Repair-TerminalUserContext {
-    <# Stellt sicher, dass Windows Terminal aus der Taskleiste im normalen Benutzerkontext startet. Behebt den Zwang zu
-       "Als Administrator ausführen" (Kompatibilitätseinstellung RUNASADMIN) und meldet ein erhöhtes Standardprofil im Log. #>
-    try {
-        # 1. Kompatibilitätseinstellung "Als Administrator ausführen" für Terminal entfernen
-        $layerKeys = @(
-            'HKCU:\Software\Microsoft\Windows NT\CurrentVersion\AppCompatFlags\Layers'
-            'HKLM:\Software\Microsoft\Windows NT\CurrentVersion\AppCompatFlags\Layers'
-        )
-        $found = $false
-        foreach ($key in $layerKeys) {
-            $item = Get-Item -Path $key -ErrorAction SilentlyContinue
-            if (-not $item) { continue }
-            foreach ($name in @($item.GetValueNames() | Where-Object { $_ -match '(?i)(\\wt\.exe|WindowsTerminal|OpenConsole)' })) {
-                $data = [string]$item.GetValue($name)
-                if ($data -notmatch 'RUNASADMIN') { continue }
-                $found = $true
-                if ($DryRun) { Write-Log "Terminal: würde 'Als Administrator ausführen' für '$name' entfernen (DryRun)." -Level WARN; continue }
-                $rest = @($data -split '\s+' | Where-Object { $_ -and $_ -ne '~' -and $_ -ne 'RUNASADMIN' })
-                if ($rest.Count -gt 0) { Set-ItemProperty -Path $key -Name $name -Value ('~ ' + ($rest -join ' ')) }
-                else { Remove-ItemProperty -Path $key -Name $name }
-                Write-Log "Terminal: 'Als Administrator ausführen' für '$name' entfernt." -Level OK
-            }
-        }
-        if (-not $found) { Write-Log 'Terminal: keine Kompatibilitätseinstellung "Als Administrator ausführen" gefunden.' }
-
-        # 2. Standardprofil prüfen (nur melden, die Einstellungen des Benutzers werden nicht verändert)
-        $settingsFile = Join-Path $env:LOCALAPPDATA 'Packages\Microsoft.WindowsTerminal_8wekyb3d8bbwe\LocalState\settings.json'
-        if (Test-Path -LiteralPath $settingsFile) {
-            $text = (Get-Content -LiteralPath $settingsFile -Raw -Encoding UTF8) -replace '(?m)^\s*//.*$', ''
-            $json = $text | ConvertFrom-Json
-            $defaultGuid = $json.defaultProfile
-            $profile = @($json.profiles.list) | Where-Object { $_.guid -eq $defaultGuid } | Select-Object -First 1
-            $defaultsElevated = $json.profiles.PSObject.Properties['defaults'] -and $json.profiles.defaults.PSObject.Properties['elevate'] -and $json.profiles.defaults.elevate
-            if ($defaultsElevated -or ($profile -and $profile.PSObject.Properties['elevate'] -and $profile.elevate)) {
-                Write-Log "Terminal: Das Standardprofil ('$($profile.name)') startet als Administrator (elevate = true in settings.json). Bitte in den Terminal-Einstellungen ein anderes Standardprofil wählen." -Level WARN
-            }
-            else { Write-Log "Terminal: Standardprofil '$($profile.name)' startet im normalen Benutzerkontext." }
-        }
-    }
-    catch { Write-Log "Terminal: Prüfung fehlgeschlagen: $($_.Exception.Message)" -Level WARN }
-}
-
 function Write-Summary {
     param([Parameter(Mandatory)][object[]]$Results)
     Write-Log '=================== Zusammenfassung ==================='
@@ -654,7 +611,6 @@ function Main {
     Set-StartFolders
     Set-DesktopWallpaper
     Set-TaskbarPins
-    Repair-TerminalUserContext
     Write-Summary -Results @($results)
 
     if (@($results | Where-Object Status -eq 'Failed').Count -gt 0) { return 1 }
