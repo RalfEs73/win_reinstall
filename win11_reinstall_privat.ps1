@@ -403,6 +403,55 @@ function Remove-DesktopShortcuts {
     }
 }
 
+function Hide-DesktopSystemIcons {
+    <# Blendet die Desktopsymbole "Dieser PC", Benutzerordner, Netzwerk, Papierkorb und Systemsteuerung aus
+       (Einstellungen > Anpassung > Designs > Desktopsymboleinstellungen). #>
+    $icons = [ordered]@{
+        'Dieser PC'     = '{20D04FE0-3AEA-1069-A2D8-08002B30309D}'
+        'Benutzerdateien' = '{59031a47-3f72-44a7-89c5-5595fe6b30ee}'
+        'Netzwerk'      = '{F02C1A0D-BE21-4350-88B0-7367FC96EF3C}'
+        'Papierkorb'    = '{645FF040-5081-101B-9F08-00AA002F954E}'
+        'Systemsteuerung' = '{5399E694-6CE5-4D6C-8FCE-1D8870FDCBA0}'
+    }
+    # NewStartPanel gilt für das aktuelle Startmenü, ClassicStartMenu für das klassische Design
+    $keys = @(
+        'HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\HideDesktopIcons\NewStartPanel'
+        'HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\HideDesktopIcons\ClassicStartMenu'
+    )
+    foreach ($name in $icons.Keys) {
+        $guid = $icons[$name]
+        if ($DryRun) { Write-Log "Desktopsymbol '$name': würde ausgeblendet (DryRun)." -Level WARN; continue }
+        try {
+            foreach ($key in $keys) {
+                if (-not (Test-Path $key)) { New-Item -Path $key -Force | Out-Null }
+                Set-ItemProperty -Path $key -Name $guid -Value 1 -Type DWord
+            }
+            Write-Log "Desktopsymbol '$name' ausgeblendet." -Level OK
+        }
+        catch { Write-Log "Desktopsymbol '$name' konnte nicht ausgeblendet werden: $($_.Exception.Message)" -Level WARN }
+    }
+}
+
+function Set-StartFolders {
+    <# Zeigt im Startmenü neben dem Netzschalter das Symbol "Einstellungen" an
+       (Einstellungen > Personalisierung > Start > Ordner). Bereits sichtbare Ordner bleiben erhalten. #>
+    $settingsGuid = [guid]'52730886-51AA-4243-9F7B-2776584659D4'   # Einstellungen
+    $key = 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Start'
+    if ($DryRun) { Write-Log 'Startmenü: würde Ordner "Einstellungen" einblenden (DryRun).' -Level WARN; return }
+    try {
+        if (-not (Test-Path $key)) { New-Item -Path $key -Force | Out-Null }
+        $current = [byte[]](Get-ItemProperty -Path $key -Name VisiblePlaces -ErrorAction SilentlyContinue).VisiblePlaces
+        if (-not $current) { $current = [byte[]]@() }
+        # VisiblePlaces ist eine Liste von GUIDs mit je 16 Bytes
+        $guids = for ($i = 0; $i + 16 -le $current.Length; $i += 16) { [guid][byte[]]$current[$i..($i + 15)] }
+        if ($guids -contains $settingsGuid) { Write-Log 'Startmenü: "Einstellungen" ist bereits sichtbar.'; return }
+        $new = [byte[]]($current + $settingsGuid.ToByteArray())
+        Set-ItemProperty -Path $key -Name VisiblePlaces -Value $new -Type Binary
+        Write-Log 'Startmenü: "Einstellungen" eingeblendet.' -Level OK
+    }
+    catch { Write-Log "Startmenü: Ordner konnten nicht gesetzt werden: $($_.Exception.Message)" -Level WARN }
+}
+
 function Set-DesktopWallpaper {
     <# Lädt das Hintergrundbild aus dem GitHub-Repo herunter und setzt es als Desktop-Hintergrund des aktuellen Benutzers. #>
     $target = Join-Path ([Environment]::GetFolderPath('MyPictures')) 'wallpaper.jpg'
@@ -586,6 +635,8 @@ function Main {
     Set-QuickAccess
     Set-ExplorerRecentSettings
     Remove-DesktopShortcuts
+    Hide-DesktopSystemIcons
+    Set-StartFolders
     Set-DesktopWallpaper
     Set-TaskbarPins
     Write-Summary -Results @($results)

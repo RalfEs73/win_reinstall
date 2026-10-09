@@ -63,10 +63,11 @@ $WorkFolders = @('C:\Temp', 'C:\GitHub')
 # RemoveAutostart : (optional) Namensmuster (Wildcard) von Autostart-Einträgen unter ...\CurrentVersion\Run, die entfernt werden
 # StopProcess : (optional) Prozessname, der nach der Installation beendet wird, falls der Installer die App startet
 $Applications = @(
-    [pscustomobject]@{ Name = 'PowerShell';					SearchTerm = 'PowerShell';			IdPattern = '^Microsoft\.PowerShell$' }
-    [pscustomobject]@{ Name = 'GitHub Desktop';				SearchTerm = 'GitHub Desktop';		IdPattern = '^GitHub\.GitHubDesktop$' }
-    [pscustomobject]@{ Name = 'Visual Studio Code';			SearchTerm = 'Visual Studio Code';	IdPattern = '^Microsoft\.VisualStudioCode$' }
-    [pscustomobject]@{ Name = 'Microsoft Copilot';			SearchTerm = 'Microsoft Copilot';	IdPattern = '^XP9CXNGPPJ97XX$'; Source = 'msstore'; FixedId = 'XP9CXNGPPJ97XX'; StopProcess = @('mscopilot_proxy', 'mscopilot'); RemoveAutostart = 'MicrosoftCopilotAutoLaunch*' }
+    [pscustomobject]@{ Name = 'PowerShell';			SearchTerm = 'PowerShell';			IdPattern = '^Microsoft\.PowerShell$' }
+    [pscustomobject]@{ Name = 'GitHub Desktop';		SearchTerm = 'GitHub Desktop';		IdPattern = '^GitHub\.GitHubDesktop$' }
+    [pscustomobject]@{ Name = 'Visual Studio Code';	SearchTerm = 'Visual Studio Code';	IdPattern = '^Microsoft\.VisualStudioCode$' }
+    [pscustomobject]@{ Name = 'Microsoft Copilot';	SearchTerm = 'Microsoft Copilot';	IdPattern = '^XP9CXNGPPJ97XX$'; Source = 'msstore'; FixedId = 'XP9CXNGPPJ97XX'; RemoveAutostart = 'MicrosoftCopilotAutoLaunch*' }
+    [pscustomobject]@{ Name = 'Poly Studio';		SearchTerm = 'Poly Studio';			IdPattern = '^Poly\.PolyStudio$' }
 )
 
 # Optionale Eigenschaften mit Standardwerten ergänzen (StrictMode-sicher)
@@ -351,6 +352,77 @@ function Set-ExplorerRecentSettings {
     }
 }
 
+function Remove-DesktopShortcuts {
+    <# Löscht alle Verknüpfungen (.lnk/.url) vom Desktop des aktuellen Benutzers und vom Desktop 'Alle Benutzer'. #>
+    $folders = @(
+        [Environment]::GetFolderPath('Desktop'),              # aktueller Benutzer (berücksichtigt OneDrive-Umleitung)
+        [Environment]::GetFolderPath('CommonDesktopDirectory') # Alle Benutzer
+    ) | Where-Object { $_ -and (Test-Path -LiteralPath $_) } | Select-Object -Unique
+
+    foreach ($folder in $folders) {
+        $items = @(Get-ChildItem -LiteralPath $folder -Force -File -ErrorAction SilentlyContinue |
+            Where-Object { $_.Extension -in '.lnk', '.url' })
+        Write-Log "Desktop-Bereinigung: $folder ($($items.Count) Verknüpfung(en))"
+        foreach ($item in $items) {
+            if ($DryRun) { Write-Log "Würde löschen: $($item.Name) (DryRun)" -Level WARN; continue }
+            try {
+                Remove-Item -LiteralPath $item.FullName -Force -ErrorAction Stop
+                Write-Log "Gelöscht: $($item.Name)" -Level OK
+            }
+            catch { Write-Log "Konnte '$($item.FullName)' nicht löschen: $($_.Exception.Message)" -Level WARN }
+        }
+    }
+}
+
+function Hide-DesktopSystemIcons {
+    <# Blendet die Desktopsymbole "Dieser PC", Benutzerordner, Netzwerk, Papierkorb und Systemsteuerung aus
+       (Einstellungen > Anpassung > Designs > Desktopsymboleinstellungen). #>
+    $icons = [ordered]@{
+        'Dieser PC'     = '{20D04FE0-3AEA-1069-A2D8-08002B30309D}'
+        'Benutzerdateien' = '{59031a47-3f72-44a7-89c5-5595fe6b30ee}'
+        'Netzwerk'      = '{F02C1A0D-BE21-4350-88B0-7367FC96EF3C}'
+        'Papierkorb'    = '{645FF040-5081-101B-9F08-00AA002F954E}'
+        'Systemsteuerung' = '{5399E694-6CE5-4D6C-8FCE-1D8870FDCBA0}'
+    }
+    # NewStartPanel gilt für das aktuelle Startmenü, ClassicStartMenu für das klassische Design
+    $keys = @(
+        'HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\HideDesktopIcons\NewStartPanel'
+        'HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\HideDesktopIcons\ClassicStartMenu'
+    )
+    foreach ($name in $icons.Keys) {
+        $guid = $icons[$name]
+        if ($DryRun) { Write-Log "Desktopsymbol '$name': würde ausgeblendet (DryRun)." -Level WARN; continue }
+        try {
+            foreach ($key in $keys) {
+                if (-not (Test-Path $key)) { New-Item -Path $key -Force | Out-Null }
+                Set-ItemProperty -Path $key -Name $guid -Value 1 -Type DWord
+            }
+            Write-Log "Desktopsymbol '$name' ausgeblendet." -Level OK
+        }
+        catch { Write-Log "Desktopsymbol '$name' konnte nicht ausgeblendet werden: $($_.Exception.Message)" -Level WARN }
+    }
+}
+
+function Set-StartFolders {
+    <# Zeigt im Startmenü neben dem Netzschalter das Symbol "Einstellungen" an
+       (Einstellungen > Personalisierung > Start > Ordner). Bereits sichtbare Ordner bleiben erhalten. #>
+    $settingsGuid = [guid]'52730886-51AA-4243-9F7B-2776584659D4'   # Einstellungen
+    $key = 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Start'
+    if ($DryRun) { Write-Log 'Startmenü: würde Ordner "Einstellungen" einblenden (DryRun).' -Level WARN; return }
+    try {
+        if (-not (Test-Path $key)) { New-Item -Path $key -Force | Out-Null }
+        $current = [byte[]](Get-ItemProperty -Path $key -Name VisiblePlaces -ErrorAction SilentlyContinue).VisiblePlaces
+        if (-not $current) { $current = [byte[]]@() }
+        # VisiblePlaces ist eine Liste von GUIDs mit je 16 Bytes
+        $guids = for ($i = 0; $i + 16 -le $current.Length; $i += 16) { [guid][byte[]]$current[$i..($i + 15)] }
+        if ($guids -contains $settingsGuid) { Write-Log 'Startmenü: "Einstellungen" ist bereits sichtbar.'; return }
+        $new = [byte[]]($current + $settingsGuid.ToByteArray())
+        Set-ItemProperty -Path $key -Name VisiblePlaces -Value $new -Type Binary
+        Write-Log 'Startmenü: "Einstellungen" eingeblendet.' -Level OK
+    }
+    catch { Write-Log "Startmenü: Ordner konnten nicht gesetzt werden: $($_.Exception.Message)" -Level WARN }
+}
+
 function Set-DesktopWallpaper {
     <# Lädt das Hintergrundbild aus dem GitHub-Repo herunter und setzt es als Desktop-Hintergrund des aktuellen Benutzers. #>
     $target = Join-Path ([Environment]::GetFolderPath('MyPictures')) 'wallpaper.jpg'
@@ -534,6 +606,9 @@ function Main {
     New-WorkFolders
     Set-QuickAccess
     Set-ExplorerRecentSettings
+    Remove-DesktopShortcuts
+    Hide-DesktopSystemIcons
+    Set-StartFolders
     Set-DesktopWallpaper
     Set-TaskbarPins
     Write-Summary -Results @($results)
