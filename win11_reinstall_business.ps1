@@ -67,7 +67,7 @@ $Applications = @(
     [pscustomobject]@{ Name = 'GitHub Desktop';		SearchTerm = 'GitHub Desktop';		IdPattern = '^GitHub\.GitHubDesktop$' }
     [pscustomobject]@{ Name = 'Visual Studio Code';	SearchTerm = 'Visual Studio Code';	IdPattern = '^Microsoft\.VisualStudioCode$' }
     [pscustomobject]@{ Name = 'Microsoft Copilot';	SearchTerm = 'Microsoft Copilot';	IdPattern = '^XP9CXNGPPJ97XX$'; Source = 'msstore'; FixedId = 'XP9CXNGPPJ97XX'; RemoveAutostart = 'MicrosoftCopilotAutoLaunch*' }
-    [pscustomobject]@{ Name = 'Poly Studio';		SearchTerm = 'Poly Studio';			IdPattern = '^Poly\.PolyStudio$' }
+    [pscustomobject]@{ Name = 'Poly Studio';		SearchTerm = 'Poly Studio';			IdPattern = '^Poly\.PolyStudio$'; StopProcess = @('PolyStudio*', 'Poly Studio*') }
 )
 
 # Optionale Eigenschaften mit Standardwerten ergänzen (StrictMode-sicher)
