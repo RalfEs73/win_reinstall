@@ -55,6 +55,7 @@ Das Log wird nach `C:\Temp\win11_reinstall_privat_<Zeitstempel>.log` geschrieben
 ## Die folgenden Anwendungen werden installiert:
 * PowerShell
 * GitHub Desktop
+* Git (Kommandozeile)
 * Visual Studio Code
 * Claude Desktop
 * Microsoft Copilot (Microsoft Store)
